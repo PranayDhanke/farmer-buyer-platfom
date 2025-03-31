@@ -1,0 +1,83 @@
+[
+    {
+      "id": 1,
+      "name": "Basmati Rice",
+      "description": "Premium quality basmati rice from Punjab",
+      "price": 90,
+      "image": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmljZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+      "category": "Grains"
+    },
+    {
+      "id": 2,
+      "name": "Tomato",
+      "description": "Fresh organic tomatoes from local farms",
+      "price": 50,
+      "image": "https://images.unsplash.com/photo-1510196826024-7d69cfd41991?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjU2OXwwfDF8c2VhcmNofDY4fHxlYXBwbGV8ZW58MHx8fHx8fDE2NzI0NzMzMzc&ixlib=rb-1.2.1&q=80&w=400",
+      "category": "Vegetables"
+    },
+    {
+      "id": 3,
+      "name": "Mangoes",
+      "description": "Freshly picked sweet mangoes from the farm",
+      "price": 150,
+      "image": "https://images.unsplash.com/photo-1562380414-25162cc45055?crop=entropy&cs=tinysrgb&fit=max&ixid=MXwyMDg5NzZ8MHwxfGFsbHwxfHx8fHx8fHwxNjI5NzMyNzMy&ixlib=rb-1.2.1&q=80&w=400",
+      "category": "Fruits"
+    },
+    {
+      "id": 4,
+      "name": "Spinach",
+      "description": "Freshly harvested organic spinach from the farm",
+      "price": 40,
+      "image": "https://images.unsplash.com/photo-1602521466325-e58ff567f678?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjU2OXwwfDF8c2VhcmNofDM3fHxlYXBwbGV8ZW58MHx8fHx8fDE2NzI0NzMzMzc&ixlib=rb-1.2.1&q=80&w=400",
+      "category": "Vegetables"
+    },
+    {
+      "id": 5,
+      "name": "Wheat Flour",
+      "description": "100% pure and organic wheat flour from the farm",
+      "price": 120,
+      "image": "https://images.unsplash.com/photo-1560823760-672f017b2d8f?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjU2OXwwfDF8c2VhcmNofDQyfHxlYXBwbGV8ZW58MHx8fHx8fDE2NzI0NzMzMzc&ixlib=rb-1.2.1&q=80&w=400",
+      "category": "Grains"
+    },
+    {
+      "id": 6,
+      "name": "Potato",
+      "description": "Fresh and organic potatoes from local farms",
+      "price": 60,
+      "image": "https://images.unsplash.com/photo-1603762129177-fffd44ab7e91?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjU2OXwwfDF8c2VhcmNofDY1fHxlYXBwbGV8ZW58MHx8fHx8fDE2NzI0NzMzMzc&ixlib=rb-1.2.1&q=80&w=400",
+      "category": "Vegetables"
+    },
+    {
+      "id": 7,
+      "name": "Cauliflower",
+      "description": "Freshly harvested cauliflower from local farms",
+      "price": 80,
+      "image": "https://images.unsplash.com/photo-1593484407622-11d2b1c52d8e?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjU2OXwwfDF8c2VhcmNofDMyfHxlYXBwbGV8ZW58MHx8fHx8fDE2NzI0NzMzMzc&ixlib=rb-1.2.1&q=80&w=400",
+      "category": "Vegetables"
+    },
+    {
+      "id": 8,
+      "name": "Cucumber",
+      "description": "Fresh and organic cucumbers from the farm",
+      "price": 30,
+      "image": "https://images.unsplash.com/photo-1581566870611-b9b16b343e93?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjU2OXwwfDF8c2VhcmNofDYxfHxlYXBwbGV8ZW58MHx8fHx8fDE2NzI0NzMzMzc&ixlib=rb-1.2.1&q=80&w=400",
+      "category": "Vegetables"
+    },
+    {
+      "id": 9,
+      "name": "Apple",
+      "description": "Freshly picked apples from the farm",
+      "price": 200,
+      "image": "https://images.unsplash.com/photo-1561948955-9c72f05c8fd9?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjU2OXwwfDF8c2VhcmNofDcyfHxlYXBwbGV8ZW58MHx8fHx8fDE2NzI0NzMzMzc&ixlib=rb-1.2.1&q=80&w=400",
+      "category": "Fruits"
+    },
+    {
+      "id": 10,
+      "name": "Onion",
+      "description": "Fresh organic onions from local farms",
+      "price": 40,
+      "image": "https://images.unsplash.com/photo-1570606508534-d9cc541e1a3e?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjU2OXwwfDF8c2VhcmNofDYxfHxlYXBwbGV8ZW58MHx8fHx8fDE2NzI0NzMzMzc&ixlib=rb-1.2.1&q=80&w=400",
+      "category": "Vegetables"
+    }
+  ]
+  

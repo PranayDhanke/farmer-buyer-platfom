@@ -1,0 +1,142 @@
+[
+  {
+      "id": 1,
+      "name": "Farmer Priya",
+      "mainCrop": "Basmati Rice",
+      "rating": 4.5,
+      "address": {
+          "state": "Punjab",
+          "city": "Amritsar",
+          "district": "Amritsar",
+          "taluka": "Tarn Taran"
+      },
+      "image": "https://randomuser.me/api/portraits/women/65.jpg",
+      "farmType": "Organic"
+  },
+  {
+      "id": 2,
+      "name": "Farmer Anil",
+      "mainCrop": "Tomato",
+      "rating": 4.0,
+      "address": {
+          "state": "Maharashtra",
+          "city": "Pune",
+          "district": "Pune",
+          "taluka": "Mulshi"
+      },
+      "image": "https://randomuser.me/api/portraits/men/65.jpg",
+      "farmType": "Conventional"
+  },
+  {
+      "id": 3,
+      "name": "Farmer Sita",
+      "mainCrop": "Mangoes",
+      "rating": 4.8,
+      "address": {
+          "state": "Uttar Pradesh",
+          "city": "Lucknow",
+          "district": "Lucknow",
+          "taluka": "Malihabad"
+      },
+      "image": "https://randomuser.me/api/portraits/women/35.jpg",
+      "farmType": "Organic"
+  },
+  {
+      "id": 4,
+      "name": "Farmer Ravi",
+      "mainCrop": "Wheat",
+      "rating": 4.2,
+      "address": {
+          "state": "Haryana",
+          "city": "Hisar",
+          "district": "Hisar",
+          "taluka": "Narnaul"
+      },
+      "image": "https://randomuser.me/api/portraits/men/45.jpg",
+      "farmType": "Conventional"
+  },
+  {
+      "id": 5,
+      "name": "Farmer Neha",
+      "mainCrop": "Spinach",
+      "rating": 4.3,
+      "address": {
+          "state": "Madhya Pradesh",
+          "city": "Indore",
+          "district": "Indore",
+          "taluka": "Mhow"
+      },
+      "image": "https://randomuser.me/api/portraits/women/15.jpg",
+      "farmType": "Organic"
+  },
+  {
+      "id": 6,
+      "name": "Farmer Aakash",
+      "mainCrop": "Corn",
+      "rating": 4.6,
+      "address": {
+          "state": "Bihar",
+          "city": "Patna",
+          "district": "Patna",
+          "taluka": "Bihta"
+      },
+      "image": "https://randomuser.me/api/portraits/men/85.jpg",
+      "farmType": "Conventional"
+  },
+  {
+      "id": 7,
+      "name": "Farmer Lata",
+      "mainCrop": "Potato",
+      "rating": 4.7,
+      "address": {
+          "state": "Uttarakhand",
+          "city": "Dehradun",
+          "district": "Dehradun",
+          "taluka": "Rishikesh"
+      },
+      "image": "https://randomuser.me/api/portraits/women/25.jpg",
+      "farmType": "Organic"
+  },
+  {
+      "id": 8,
+      "name": "Farmer Om",
+      "mainCrop": "Barley",
+      "rating": 4.1,
+      "address": {
+          "state": "Rajasthan",
+          "city": "Jaipur",
+          "district": "Jaipur",
+          "taluka": "Sanganer"
+      },
+      "image": "https://randomuser.me/api/portraits/men/55.jpg",
+      "farmType": "Conventional"
+  },
+  {
+      "id": 9,
+      "name": "Farmer Suman",
+      "mainCrop": "Cauliflower",
+      "rating": 4.4,
+      "address": {
+          "state": "West Bengal",
+          "city": "Kolkata",
+          "district": "South 24 Parganas",
+          "taluka": "Budge Budge"
+      },
+      "image": "https://randomuser.me/api/portraits/women/5.jpg",
+      "farmType": "Organic"
+  },
+  {
+      "id": 10,
+      "name": "Farmer Rajesh",
+      "mainCrop": "Onion",
+      "rating": 3.9,
+      "address": {
+          "state": "Tamil Nadu",
+          "city": "Chennai",
+          "district": "Chennai",
+          "taluka": "Tambaram"
+      },
+      "image": "https://randomuser.me/api/portraits/men/35.jpg",
+      "farmType": "Conventional"
+  }
+]
