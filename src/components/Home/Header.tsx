@@ -1,28 +1,66 @@
-"use client"
-import Image from 'next/image'
-import Link from 'next/link'
-import React, { useState } from 'react'
-import Logo from "../../../public/images/image.png"
-import { FaUserCircle } from 'react-icons/fa' // Importing user circle icon from React Icons
-import { FiChevronDown } from 'react-icons/fi' // Importing Chevron down icon
-import Buyer_Cart from '../Buyer/Buyer_Cart'
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import Logo from "../../../public/images/image.png";
+import { FaUserCircle } from "react-icons/fa";
+import { FiChevronDown } from "react-icons/fi";
+import Buyer_Cart from "../Buyer/Buyer_Cart";
+import Cookies from "js-cookie";
+import { toast, ToastContainer } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
-  // Simulating login state for demonstration (This can be replaced with context or Redux for real use)
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // true if logged in, false otherwise
-  const [userType, setUserType] = useState(''); // 'farmer' or 'buyer', empty for not logged in
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState("");
+  const logoutuser = () => {
+    Cookies.remove("firebase_token");
+    router.refresh(); // This is to ensure the page refreshes after logout
+    toast.success("Logged Out");
+  };
+
+  // Adding useEffect that will check for token on mount
+  useEffect(() => {
+    const idToken = Cookies.get("firebase_token");
+
+    const verifyUser = async () => {
+      if (idToken) {
+        // This will trigger a re-render once token is found
+        const res = await fetch("/api/Farmer/Authentication/check-user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: idToken }),
+        });
+
+        const data = await res.json();
+
+        if (data.uid) {
+          setIsLoggedIn(true);
+          setUserType("farmer");
+        } else {
+          setIsLoggedIn(false);
+          setUserType("");
+        }
+      } else {
+        setIsLoggedIn(false);
+        setUserType("");
+      }
+    };
+
+    verifyUser(); // Calling the function to verify user on mount
+  }, []); // Empty dependency array ensures it runs once on mount
 
   return (
     <div>
+      <ToastContainer />
       <header className="bg-gradient-to-r from-green-600 to-green-800 text-white py-4 md:py-6">
         <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center">
           <Link href={"/"}>
             <div className="flex items-center mb-4 md:mb-0">
-              <Image
-                className="w-8 h-8 mr-3 fill-current"
-                src={Logo}
-                alt="Logo"
-              />
+              <Image className="w-8 h-8 mr-3 fill-current" src={Logo} alt="Logo" />
               <h1 className="text-2xl font-bold">Argocart</h1>
             </div>
           </Link>
@@ -45,12 +83,11 @@ const Header = () => {
           </nav>
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
             {!isLoggedIn ? (
-              // Not logged in
               <details className="relative">
                 <summary className="flex items-center justify-center cursor-pointer hover:text-green-200 transition-colors duration-200">
-                  <FaUserCircle className="mr-1 text-xl" /> {/* React Icon for user */}
+                  <FaUserCircle className="mr-1 text-xl" />
                   Login
-                  <FiChevronDown className="text-sm ml-1" /> {/* React Icon for Chevron Down */}
+                  <FiChevronDown className="text-sm ml-1" />
                 </summary>
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 text-gray-700">
                   <Link href="/login/farmer-login">
@@ -61,13 +98,12 @@ const Header = () => {
                   </Link>
                 </div>
               </details>
-            ) : userType === 'farmer' ? (
-              // Farmer logged in
+            ) : userType === "farmer" ? (
               <details className="relative">
                 <summary className="flex items-center cursor-pointer hover:text-green-200 transition-colors duration-200">
-                  <FaUserCircle className="mr-1" /> {/* React Icon for user */}
+                  <FaUserCircle className="mr-1" />
                   Farmer Profile
-                  <FiChevronDown className="text-sm ml-1" /> {/* React Icon for Chevron Down */}
+                  <FiChevronDown className="text-sm ml-1" />
                 </summary>
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 text-gray-700">
                   <Link href="/Farmer-Panel/Profile">
@@ -76,16 +112,18 @@ const Header = () => {
                   <Link href="/Farmer-Panel">
                     <span className="block px-4 py-2 hover:bg-green-100 transition-colors duration-200">My Products</span>
                   </Link>
+                  <span onClick={logoutuser} className="block px-4 py-2 hover:bg-green-100 transition-colors duration-200">
+                    Logout
+                  </span>
                 </div>
               </details>
-            ) : userType === 'buyer' ? (
-              // Buyer logged in
+            ) : userType === "buyer" ? (
               <div>
                 <details className="relative">
                   <summary className="flex items-center cursor-pointer hover:text-green-200 transition-colors duration-200">
-                    <FaUserCircle className="mr-1" /> {/* React Icon for user */}
+                    <FaUserCircle className="mr-1" />
                     Buyer Profile
-                    <FiChevronDown className="text-sm ml-1" /> {/* React Icon for Chevron Down */}
+                    <FiChevronDown className="text-sm ml-1" />
                   </summary>
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 text-gray-700">
                     <Link href="/buyer/profile">
@@ -105,9 +143,9 @@ const Header = () => {
           </div>
         </div>
       </header>
-      {userType == "buyer" ? <Buyer_Cart /> : null}
+      {userType === "buyer" ? <Buyer_Cart /> : null}
     </div>
   );
-}
+};
 
 export default Header;

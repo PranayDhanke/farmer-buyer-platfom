@@ -1,0 +1,141 @@
+{
+  "Maharashtra": {
+    "districts": [
+      {
+        "districtCode": 485,
+        "districtNameEnglish": "Wardha",
+        "talukas": {
+          "Wardha": [
+            "Wardha City", 
+            "Sindi", 
+            "Arvi", 
+            "Hinganghat", 
+            "Khamgaon", 
+            "Babhulgaon", 
+            "Rajura", 
+            "Selu", 
+            "Karanja", 
+            "Pachora"
+          ],
+          "Sindi": [
+            "Sindi", 
+            "Goregaon", 
+            "Manora", 
+            "Rajura"
+          ],
+          "Arvi": [
+            "Arvi", 
+            "Goregaon", 
+            "Babhulgaon"
+          ],
+          "Hinganghat": [
+            "Hinganghat", 
+            "Adgaon", 
+            "Rohankheda", 
+            "Khamgaon"
+          ],
+          "Khamgaon": [
+            "Khamgaon", 
+            "Nandgaon", 
+            "Babhulgaon"
+          ],
+          "Selu": [
+            "Selu", 
+            "Goregaon", 
+            "Manora"
+          ],
+          "Rajura": [
+            "Rajura", 
+            "Pachora", 
+            "Babhulgaon"
+          ]
+        }
+      },
+      {
+        "districtCode": 476,
+        "districtNameEnglish": "Nagpur",
+        "talukas": {
+          "Nagpur": [
+            "Nagpur", 
+            "Pachpaoli", 
+            "Kalmeshwar", 
+            "Mankapur", 
+            "Hingna", 
+            "Butibori", 
+            "Koradi", 
+            "Kamptee", 
+            "Borgaon", 
+            "Narkhed"
+          ],
+          "Ramtek": [
+            "Ramtek", 
+            "Gondi", 
+            "Katol", 
+            "Nandgaon"
+          ],
+          "Kamptee": [
+            "Kamptee", 
+            "Narkhed", 
+            "Hingna"
+          ],
+          "Butibori": [
+            "Butibori", 
+            "Wadi", 
+            "Paoni"
+          ],
+          "Kalmeshwar": [
+            "Kalmeshwar", 
+            "Mankapur", 
+            "Pachpaoli"
+          ],
+          "Hingna": [
+            "Hingna", 
+            "Khaparkheda", 
+            "Babhulgaon"
+          ]
+        }
+      },
+      {
+        "districtCode": 478,
+        "districtNameEnglish": "Amravati",
+        "talukas": {
+          "Amravati": [
+            "Amravati", 
+            "Malkapur", 
+            "Chandur Bazar", 
+            "Warud", 
+            "Shendurjana", 
+            "Khamgaon", 
+            "Dhamangaon", 
+            "Achalpur", 
+            "Pulgaon", 
+            "Babhulgaon"
+          ],
+          "Chandur": [
+            "Chandur", 
+            "Jalgaon", 
+            "Nandgaon", 
+            "Rajur"
+          ],
+          "Warud": [
+            "Warud", 
+            "Goregaon", 
+            "Manora", 
+            "Wadi"
+          ],
+          "Dhamangaon": [
+            "Dhamangaon", 
+            "Ralegaon", 
+            "Nagpur", 
+            "Wadi"
+          ],
+          "Achalpur": [
+            "Achalpur", 
+            "Dharni", 
+            "Babhulgaon"
+          ]
+        }
+      }
+    ]
+  }
+}

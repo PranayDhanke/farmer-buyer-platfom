@@ -1,14 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-
+import Cookies from "js-cookie";
+import mahaADD from "@/../public/data/mahaAddress.json"; // Make sure the path is correct
+import { toast, ToastContainer } from "react-toastify";
+import { useRouter } from "next/navigation";
+``
 const Farmer_Register = () => {
+
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    farmName: "",
-    location: "",
     phone: "",
     profilePhoto: null,
     district: "",
@@ -21,14 +26,22 @@ const Farmer_Register = () => {
   });
 
   const [currentStep, setCurrentStep] = useState(1);
-
-  // Address data for district, taluka, and city (can be dynamically populated)
-  const districts = ["District 1", "District 2", "District 3"];
-  const talukas = ["Taluka 1", "Taluka 2", "Taluka 3"];
-  const cities = ["City 1", "City 2", "City 3"];
+  const [districts, setDistricts] = useState<string[]>([]);
+  const [talukas, setTalukas] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
   const farmTypes = ["Organic", "Non-Organic", "Hydroponics", "Agroforestry"];
 
-  const handleChange = (e:any) => {
+  // Load the districts from the JSON data
+  useEffect(() => {
+    // Assuming mahaADD is structured with districts having a key for each district
+    const districtNames = Object.keys(mahaADD.Maharashtra.districts).map(
+      (districtKey: any) =>
+        mahaADD.Maharashtra.districts[districtKey].districtNameEnglish
+    );
+    setDistricts(districtNames);
+  }, []);
+
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -36,18 +49,72 @@ const Farmer_Register = () => {
     });
   };
 
-  const handleFileChange = (e:any) => {
+  const handleFileChanges = (e: any) => {
     const file = e.target.files[0];
+
+    setFormData({
+      ...formData,
+      profilePhoto: file,
+    });
+  };
+
+  const handleFileChange = (e: any) => {
+    const file = e.target.files[0];
+
     setFormData({
       ...formData,
       aadharPhoto: file,
     });
   };
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    // Handle form submission logic
-    console.log(formData);
+
+    const formDataToSend = new FormData();
+
+    // Append regular form data
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("phone", formData.phone);
+    formDataToSend.append("password", formData.password);
+    formDataToSend.append("aadhar", formData.aadhar);
+    formDataToSend.append("mainCrops", formData.mainCrops);
+    formDataToSend.append("farmType", formData.farmType);
+    formDataToSend.append("district", formData.district);
+    formDataToSend.append("taluka", formData.taluka);
+    formDataToSend.append("city", formData.city);
+
+    // Append files if they exist
+    if (formData.profilePhoto) {
+      formDataToSend.append("profilePhoto", formData.profilePhoto);
+    }
+    if (formData.aadharPhoto) {
+      formDataToSend.append("aadharPhoto", formData.aadharPhoto);
+    }
+
+    try {
+      const response = await fetch("/api/Farmer/Authentication/create-account", {
+        method: "POST",
+        body: formDataToSend,
+      });
+
+
+      if (response.ok) {
+          toast.success("Account created successfully")
+          const data = await response.json()
+
+          const idToken = data.idToken
+  
+          Cookies.set('firebase_token', idToken, { expires: 7, secure: true });
+          
+          router.push("/Farmer-Panel")        
+      } else {
+        toast.error("Error While Register")
+        // Handle error (e.g., show an error message)
+      }
+    } catch (error) {
+      toast.error("Registration Error")
+    }
   };
 
   const nextStep = () => {
@@ -58,8 +125,23 @@ const Farmer_Register = () => {
     setCurrentStep(currentStep - 1);
   };
 
+  // Fetch talukas and cities when the district is selected
+  useEffect(() => {
+    if (formData.district) {
+      const districtData = mahaADD.Maharashtra.districts.find(
+        (district: any) => district.districtNameEnglish === formData.district
+      );
+
+      if (districtData) {
+        setTalukas(Object.keys(districtData.talukas)); // Assuming talukas is an object
+        setCities(districtData.talukas[formData.taluka] || []); // Set cities based on selected taluka
+      }
+    }
+  }, [formData.district, formData.taluka]);
+
   return (
     <div id="farmer-register" className="font-sans bg-white">
+      <ToastContainer/>
       <main>
         <section className="bg-gradient-to-b from-green-50 to-white py-12 md:py-20">
           <div className="container mx-auto px-4 md:px-6">
@@ -68,7 +150,7 @@ const Farmer_Register = () => {
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold  mb-4">
                   Register as a Farmer{" "}
                   <span className="text-green-600">Join Our Community</span>
-                </h2> 
+                </h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Create your account to start selling your farm products and
                   connect with buyers directly.
@@ -82,7 +164,9 @@ const Farmer_Register = () => {
                   {/* Step 1: Personal Information */}
                   {currentStep === 1 && (
                     <>
-                      <h3 className="text-xl font-bold text-teal-500 mb-4">Step 1: Personal Details</h3>
+                      <h3 className="text-xl font-bold text-teal-500 mb-4">
+                        Step 1: Personal Details
+                      </h3>
                       <div className="mb-4">
                         <label
                           htmlFor="name"
@@ -121,6 +205,24 @@ const Farmer_Register = () => {
                       </div>
                       <div className="mb-4">
                         <label
+                          htmlFor="mobile"
+                          className="block text-gray-700 font-medium mb-2"
+                        >
+                          Mobile Number
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                          placeholder="Enter your Mobile Number"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
                           htmlFor="password"
                           className="block text-gray-700 font-medium mb-2"
                         >
@@ -148,7 +250,7 @@ const Farmer_Register = () => {
                           type="file"
                           id="profilePhoto"
                           name="profilePhoto"
-                          onChange={handleFileChange}
+                          onChange={handleFileChanges}
                           className="w-full p-3 border border-gray-300 rounded-lg"
                         />
                       </div>
@@ -167,7 +269,9 @@ const Farmer_Register = () => {
                   {/* Step 2: Aadhar Card & Main Crops */}
                   {currentStep === 2 && (
                     <>
-                      <h3 className="text-xl font-bold text-teal-500 mb-4">Step 2: Aadhar & Farm Details</h3>
+                      <h3 className="text-xl font-bold text-teal-500 mb-4">
+                        Step 2: Aadhar & Farm Details
+                      </h3>
                       <div className="mb-4">
                         <label
                           htmlFor="mainCrops"
@@ -177,8 +281,8 @@ const Farmer_Register = () => {
                         </label>
                         <input
                           type="text"
-                          id="aadahr"
-                          name="aadahr"
+                          id="aadhar"
+                          name="aadhar"
                           value={formData.aadhar}
                           onChange={handleChange}
                           required
@@ -265,7 +369,9 @@ const Farmer_Register = () => {
                   {/* Step 3: Address Details */}
                   {currentStep === 3 && (
                     <>
-                      <h3 className="text-xl font-bold text-teal-500 mb-4">Step 3: Address Details</h3>
+                      <h3 className="text-xl font-bold text-teal-500 mb-4">
+                        Step 3: Address Details
+                      </h3>
                       <div className="mb-4">
                         <label
                           htmlFor="district"
@@ -279,9 +385,11 @@ const Farmer_Register = () => {
                           value={formData.district}
                           onChange={handleChange}
                           required
-                          className="w-full p-3 border border-gray-300 rounded-lg"
+                          className="w-full overflow-y-scroll p-3 border border-gray-300 rounded-lg"
                         >
-                          <option value="">Select District</option>
+                          <option className="overflow-scroll" value="">
+                            Select District
+                          </option>
                           {districts.map((district) => (
                             <option key={district} value={district}>
                               {district}

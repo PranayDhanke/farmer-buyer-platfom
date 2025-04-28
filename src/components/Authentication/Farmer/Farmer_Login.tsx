@@ -1,17 +1,19 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import Cookies from "js-cookie";
 
 const Farmer_Login = () => {
-
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const handleChange = (e:any) => {
+
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -19,15 +21,41 @@ const Farmer_Login = () => {
     });
   };
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = async (e: any) => {
+    const email = formData.email;
+    const password = formData.password;
     e.preventDefault();
-    // Handle login logic here (e.g., authentication with backend)
-    router.push("/Farmer-Panel")
-    console.log(formData);
+    try {
+      const response = await fetch("/api/Farmer/Authentication/login", {
+        method: "POST",
+        headers:{'Content-Type':'Application/json'},
+        body:JSON.stringify({
+          email,
+          password
+        })
+      });
+      if (response.ok) {
+        toast.success("Login Suceess")
+
+        const data = await response.json()
+
+        const idToken = data.idToken
+
+        Cookies.set('firebase_token', idToken, { expires: 7, secure: true });
+        
+        router.push('/Farmer-Panel')
+        
+      } else {
+        toast.error("Authentication Error")
+      }
+    } catch (error) {
+      toast.error("Authentication Error")
+    }
   };
 
   return (
     <div id="farmer-login" className="font-sans bg-white">
+      <ToastContainer />
       <main>
         <section className="bg-gradient-to-b from-green-50 to-white py-12 md:py-20">
           <div className="container mx-auto px-4 md:px-6">

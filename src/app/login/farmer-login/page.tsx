@@ -1,12 +1,14 @@
-import Farmer_Login from '@/components/Authentication/Farmer/Farmer_Login'
-import React from 'react'
+import Farmer_Login from "@/components/Authentication/Farmer/Farmer_Login";
+import Header from "@/components/Home/Header";
+import React from "react";
 
 const page = () => {
   return (
     <div>
-        <Farmer_Login />
+      <Header />
+      <Farmer_Login />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;
