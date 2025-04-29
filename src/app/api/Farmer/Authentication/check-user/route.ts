@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
     
   } catch (error) {
     console.log("error" + error);
-    
-    return NextResponse.json({ error: error || "Invalid or expired token" }, { status: 401 });
+    return NextResponse.json({ error: error || "Invalid or expired token" }, { status: 402 });
   }
 }

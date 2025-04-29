@@ -1,12 +1,14 @@
-import Farmer_Profile_Edit from '@/components/Farmer/Farmer_Profile_Edit'
-import React from 'react'
+import Farmer_Profile_Edit from "@/components/Farmer/Farmer_Profile_Edit";
+import Header from "@/components/Home/Header";
+import React from "react";
 
 const page = () => {
   return (
     <div>
-        <Farmer_Profile_Edit />
+      <Header />
+      <Farmer_Profile_Edit />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

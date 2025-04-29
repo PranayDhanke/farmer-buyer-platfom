@@ -15,6 +15,8 @@ const FarmerPanel = ({isEdit , id}:{isEdit:boolean , id:any}) => {
   });
   const [isEditing, setIsEditing] = useState<boolean>(isEdit);
 
+  const [isuser , setisuer] = useState(false);
+
   // Handle adding a new product
   const handleAddProduct = (e: React.FormEvent) => {
     e.preventDefault();

@@ -87,6 +87,8 @@ export async function POST(req: NextRequest) {
       city,
       profilePhoto: profilePhotoUrl,
       aadharPhoto: aadharPhotoUrl,
+      state:"Maharashtra",
+      rating:"0"
     });
 
     return NextResponse.json({ idToken, authenticated: true });

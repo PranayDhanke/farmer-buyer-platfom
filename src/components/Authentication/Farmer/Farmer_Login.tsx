@@ -39,8 +39,12 @@ const Farmer_Login = () => {
 
         const data = await response.json()
 
+        console.log(data);
+        
         const idToken = data.idToken
 
+        console.log(idToken);
+        
         Cookies.set('firebase_token', idToken, { expires: 7, secure: true });
         
         router.push('/Farmer-Panel')

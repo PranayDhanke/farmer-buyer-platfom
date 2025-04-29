@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
 
     const idToken = await userCred.user.getIdToken();
 
+    console.log("token " + idToken);
+    
     return NextResponse.json( { idToken, authenticated: true });
   } catch (error) {
     console.log("ERROR IS HEERE");
