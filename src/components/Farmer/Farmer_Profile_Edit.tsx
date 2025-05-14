@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import Logo from "../../../public/images/image.png";
-import Image from "next/image";
 import Link from "next/link";
 
 const Farmer_Profile_Edit = () => {

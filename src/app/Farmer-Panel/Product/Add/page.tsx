@@ -1,4 +1,4 @@
-import FarmerPanel from "@/components/Farmer/FarmerPanel";
+import Farmer_Prod_AddEdit from "@/components/Farmer/Farmer_Prod_AddEdit";
 import Header from "@/components/Home/Header";
 import React from "react";
 
@@ -6,7 +6,7 @@ const page = () => {
   return (
     <div>
       <Header />
-      <FarmerPanel isEdit={false} id={""} />
+      <Farmer_Prod_AddEdit isEdit={false} id={""} />
     </div>
   );
 };

@@ -1,14 +1,19 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import mahaADD from "@/../public/data/mahaAddress.json"; // Make sure the path is correct
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
-``
+import { VscLoading } from "react-icons/vsc";
+import { LiaCheckCircle } from "react-icons/lia";
+``;
 const Farmer_Register = () => {
-
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [loading, setloading] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -51,7 +56,13 @@ const Farmer_Register = () => {
 
   const handleFileChanges = (e: any) => {
     const file = e.target.files[0];
-
+    if (file && file.size > 500 * 1024) {
+      toast.warn("File size must be less than 500 kb");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
     setFormData({
       ...formData,
       profilePhoto: file,
@@ -60,7 +71,13 @@ const Farmer_Register = () => {
 
   const handleFileChange = (e: any) => {
     const file = e.target.files[0];
-
+    if (file && file.size > 500 * 1024) {
+      toast.warn("File size must be less than 500 kb");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
     setFormData({
       ...formData,
       aadharPhoto: file,
@@ -93,27 +110,35 @@ const Farmer_Register = () => {
     }
 
     try {
-      const response = await fetch("/api/Farmer/Authentication/create-account", {
-        method: "POST",
-        body: formDataToSend,
-      });
+      setloading(true);
 
+      toast.loading("Wait Files are Uploading");
+
+      const response = await fetch(
+        "/api/Farmer/Authentication/create-account",
+        {
+          method: "POST",
+          body: formDataToSend,
+        }
+      );
 
       if (response.ok) {
-          toast.success("Account created successfully")
-          const data = await response.json()
+        toast.success("Account created successfully");
+        const data = await response.json();
 
-          const idToken = data.idToken
-  
-          Cookies.set('firebase_token', idToken, { expires: 7, secure: true });
-          
-          router.push("/Farmer-Panel")        
+        const idToken = data.idToken;
+
+        Cookies.set("firebase_token", idToken, { expires: 7, secure: true });
+
+        setloading(false);
+        setSuccess(true);
+        router.push("/Farmer-Panel/Profile");
       } else {
-        toast.error("Error While Register")
+        toast.error("Error While Register");
         // Handle error (e.g., show an error message)
       }
     } catch (error) {
-      toast.error("Registration Error")
+      toast.error("Registration Error");
     }
   };
 
@@ -141,7 +166,7 @@ const Farmer_Register = () => {
 
   return (
     <div id="farmer-register" className="font-sans bg-white">
-      <ToastContainer/>
+      <ToastContainer />
       <main>
         <section className="bg-gradient-to-b from-green-50 to-white py-12 md:py-20">
           <div className="container mx-auto px-4 md:px-6">
@@ -169,7 +194,7 @@ const Farmer_Register = () => {
                       </h3>
                       <div className="mb-4">
                         <label
-                          htmlFor="name"
+                          htmlFor="Name"
                           className="block text-gray-700 font-medium mb-2"
                         >
                           Full Name
@@ -244,10 +269,12 @@ const Farmer_Register = () => {
                           htmlFor="profilePhoto"
                           className="block text-gray-700 font-medium mb-2"
                         >
-                          Profile Photo
+                          Profile Photo (File size must be less than 500kb)
                         </label>
                         <input
                           type="file"
+                          accept="image/*"
+                          ref={fileInputRef}
                           id="profilePhoto"
                           name="profilePhoto"
                           onChange={handleFileChanges}
@@ -295,10 +322,12 @@ const Farmer_Register = () => {
                           htmlFor="aadharPhoto"
                           className="block text-gray-700 font-medium mb-2"
                         >
-                          Aadhar Card Photo
+                          Aadhar Card Photo (image must be less than 500KB)
                         </label>
                         <input
                           type="file"
+                          accept="image/*"
+                          ref={fileInputRef}
                           id="aadharPhoto"
                           name="aadharPhoto"
                           onChange={handleFileChange}
@@ -455,7 +484,13 @@ const Farmer_Register = () => {
                           type="submit"
                           className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors duration-200"
                         >
-                          Register
+                          {loading ? (
+                            <VscLoading className="animate-spin text-center mx-auto text-xl" />
+                          ) : isSuccess ? (
+                            <LiaCheckCircle className="text-center mx-auto text-xl" />
+                          ) : (
+                            "Register"
+                          )}
                         </button>
                       </div>
                     </>

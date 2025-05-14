@@ -8,16 +8,16 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const phone = formData.get("phone");
-    const district = formData.get("district");
-    const taluka = formData.get("taluka");
-    const city = formData.get("city");
-    const aadhar = formData.get("aadhar");
-    const mainCrops = formData.get("mainCrops");
-    const farmType = formData.get("farmType");
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string | null;
+    const password = formData.get("password") as string | null;
+    const phone = formData.get("phone") as string | null;
+    const district = formData.get("district") as string | null;
+    const taluka = formData.get("taluka") as string | null;
+    const city = formData.get("city") as string | null;
+    const aadhar = formData.get("aadhar") as string | null;
+    const mainCrops = formData.get("mainCrops") as string | null;
+    const farmType = formData.get("farmType") as string | null;
 
     // These will be File or Blob
     const profilePhoto = formData.get("profilePhoto") as File;
@@ -34,14 +34,11 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const emails = email.toString();
-    const pass = password.toString();
-
     // Step 1: Create Firebase Auth user
     const userCredential = await createUserWithEmailAndPassword(
       fireAuth,
-      emails,
-      pass
+      email,
+      password
     );
     const user = userCredential.user;
 

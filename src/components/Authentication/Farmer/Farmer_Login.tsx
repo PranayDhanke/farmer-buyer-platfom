@@ -12,7 +12,6 @@ const Farmer_Login = () => {
     password: "",
   });
 
-
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData({
@@ -28,32 +27,34 @@ const Farmer_Login = () => {
     try {
       const response = await fetch("/api/Farmer/Authentication/login", {
         method: "POST",
-        headers:{'Content-Type':'Application/json'},
-        body:JSON.stringify({
+        headers: { "Content-Type": "Application/json" },
+        body: JSON.stringify({
           email,
-          password
-        })
+          password,
+        }),
       });
       if (response.ok) {
-        toast.success("Login Suceess")
+        toast.success("Login Suceess");
 
-        const data = await response.json()
+        const data = await response.json();
 
-        console.log(data);
-        
-        const idToken = data.idToken
+        const idToken = data.idToken;
 
-        console.log(idToken);
-        
-        Cookies.set('firebase_token', idToken, { expires: 7, secure: true });
-        
-        router.push('/Farmer-Panel')
-        
+        Cookies.set("firebase_token", idToken, {
+          expires: 7,
+          secure: true,
+          sameSite: "Strict",
+        });
+
+        router.push("/Farmer-Panel/Profile");
       } else {
-        toast.error("Authentication Error")
+        toast.error("Authentication Error");
+        Cookies.remove("firebase_token");
+        Cookies.remove("Uid");
+        Cookies.remove("userSession");
       }
     } catch (error) {
-      toast.error("Authentication Error")
+      toast.error("Authentication Error");
     }
   };
 

@@ -1,7 +1,6 @@
 import { fireAuth } from "@/app/lib/Firebase/Firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { NextRequest, NextResponse } from "next/server";
-import Cookies from "js-cookie";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,8 +13,6 @@ export async function POST(req: NextRequest) {
 
     const idToken = await userCred.user.getIdToken();
 
-    console.log("token " + idToken);
-    
     return NextResponse.json( { idToken, authenticated: true });
   } catch (error) {
     console.log("ERROR IS HEERE");
