@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import cookie from 'cookie';
 import { adminAuth } from "@/app/lib/Firebase/firebaseAdmin";
 
 export async function POST(req: NextRequest) {

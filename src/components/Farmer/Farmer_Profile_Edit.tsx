@@ -1,10 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import Link from "next/link";
 
 const Farmer_Profile_Edit = () => {
-  const [formData, setFormData] = useState({
-    name: "Farmer Priya", // Example data, in reality, these values would come from the user's profile
+  interface FormData {
+    name: string;
+    email: string;
+    farmName: string;
+    location: string;
+    phone: string;
+    profilePhoto: File | null;
+    district: string;
+    taluka: string;
+    city: string;
+    aadhar: string;
+    mainCrops: string;
+    aadharPhoto: File | null;
+    farmType: string;
+  }
+
+  const [formData, setFormData] = useState<FormData>({
+    name: "Farmer Priya",
     email: "farmer.priya@example.com",
     farmName: "Priya Farms",
     location: "Punjab",
@@ -16,7 +32,7 @@ const Farmer_Profile_Edit = () => {
     aadhar: "1234 5678 9101",
     mainCrops: "Basmati Rice",
     aadharPhoto: null,
-    farmType: "Organic", // Example farm type
+    farmType: "Organic",
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -27,7 +43,9 @@ const Farmer_Profile_Edit = () => {
   const cities = ["Amritsar", "Ludhiana", "Chandigarh"];
   const farmTypes = ["Organic", "Non-Organic", "Hydroponics", "Agroforestry"];
 
-  const handleChange = (e:any) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -35,15 +53,15 @@ const Farmer_Profile_Edit = () => {
     });
   };
 
-  const handleFileChange = (e:any) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
     setFormData({
       ...formData,
       aadharPhoto: file,
     });
   };
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle form submission logic
     console.log(formData);
@@ -69,7 +87,8 @@ const Farmer_Profile_Edit = () => {
                   <span className="text-green-600">Update Your Details</span>
                 </h2>
                 <p className="text-lg text-gray-600 mb-8">
-                  Update your details to ensure accurate information about your farm.
+                  Update your details to ensure accurate information about your
+                  farm.
                 </p>
               </div>
               <div className="md:w-1/2">
@@ -80,7 +99,9 @@ const Farmer_Profile_Edit = () => {
                   {/* Step 1: Personal Information */}
                   {currentStep === 1 && (
                     <>
-                      <h3 className="text-xl font-bold text-teal-500 mb-4">Step 1: Personal Details</h3>
+                      <h3 className="text-xl font-bold text-teal-500 mb-4">
+                        Step 1: Personal Details
+                      </h3>
                       <div className="mb-4">
                         <label
                           htmlFor="name"
@@ -165,7 +186,9 @@ const Farmer_Profile_Edit = () => {
                   {/* Step 2: Aadhar Card & Main Crops */}
                   {currentStep === 2 && (
                     <>
-                      <h3 className="text-xl font-bold text-teal-500 mb-4">Step 2: Aadhar & Farm Details</h3>
+                      <h3 className="text-xl font-bold text-teal-500 mb-4">
+                        Step 2: Aadhar & Farm Details
+                      </h3>
                       <div className="mb-4">
                         <label
                           htmlFor="aadhar"
@@ -262,7 +285,9 @@ const Farmer_Profile_Edit = () => {
                   {/* Step 3: Address Details */}
                   {currentStep === 3 && (
                     <>
-                      <h3 className="text-xl font-bold text-teal-500 mb-4">Step 3: Address Details</h3>
+                      <h3 className="text-xl font-bold text-teal-500 mb-4">
+                        Step 3: Address Details
+                      </h3>
                       <div className="mb-4">
                         <label
                           htmlFor="district"
@@ -351,7 +376,7 @@ const Farmer_Profile_Edit = () => {
                   )}
 
                   <p className="text-center text-sm text-gray-600 mt-6">
-                    Don't want to edit?{" "}
+                    {"Don't want to edit?"}
                     <Link
                       href="/Farmer-Panel"
                       className="text-green-600 hover:text-green-800"

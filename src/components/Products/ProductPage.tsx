@@ -1,9 +1,10 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoIosFunnel } from "react-icons/io";
 
 import products from "../../../public/data/product.json";
+import Image from "next/image";
 
 const ProductPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,11 +13,14 @@ const ProductPage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const filteredProducts = products.filter((product) => {
-    const isCategoryMatch = selectedCategory === "All" || product.category === selectedCategory;
+    const isCategoryMatch =
+      selectedCategory === "All" || product.category === selectedCategory;
     const isPriceMatch =
       selectedPriceRange === "All" ||
       (selectedPriceRange === "Under 100" && product.price < 100) ||
-      (selectedPriceRange === "100-200" && product.price >= 100 && product.price <= 200) ||
+      (selectedPriceRange === "100-200" &&
+        product.price >= 100 &&
+        product.price <= 200) ||
       (selectedPriceRange === "Above 200" && product.price > 200);
 
     const isSearchMatch =
@@ -40,7 +44,10 @@ const ProductPage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <FaSearch className="absolute top-3 right-3 text-gray-500" size={20} />
+              <FaSearch
+                className="absolute top-3 right-3 text-gray-500"
+                size={20}
+              />
             </div>
 
             <div className="relative">
@@ -68,7 +75,9 @@ const ProductPage = () => {
                     </select>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700 mb-2">Price Range</label>
+                    <label className="block text-gray-700 mb-2">
+                      Price Range
+                    </label>
                     <select
                       value={selectedPriceRange}
                       onChange={(e) => setSelectedPriceRange(e.target.value)}
@@ -98,9 +107,11 @@ const ProductPage = () => {
                   className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
                 >
                   <div className="relative">
-                    <img
+                    <Image
                       src={product.image}
                       alt={product.name}
+                      width={500} // or any estimated width
+                      height={192} // height equivalent to h-48 (48 × 4 = 192px)
                       className="w-full h-48 object-cover"
                     />
                     <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">
@@ -110,20 +121,26 @@ const ProductPage = () => {
                   <div className="p-4">
                     <div className="flex justify-between items-center mb-2">
                       <h3 className="font-bold text-lg">{product.name}</h3>
-                      <span className="text-green-600 font-bold">₹{product.price}/kg</span>
+                      <span className="text-green-600 font-bold">
+                        ₹{product.price}/kg
+                      </span>
                     </div>
-                    <p className="text-gray-600 text-sm mb-3">{product.description}</p>
+                    <p className="text-gray-600 text-sm mb-3">
+                      {product.description}
+                    </p>
                     <div className="flex items-center mb-3">
-                      <img
+                      <Image
                         src="https://randomuser.me/api/portraits/women/65.jpg"
                         alt="Farmer"
-                        className="w-8 h-8 rounded-full mr-2"
+                        width={32}
+                        height={32}
+                        className="rounded-full mr-2"
                       />
-                      <span className="text-sm text-gray-700">{product.farmer}</span>
+                      <span className="text-sm text-gray-700">
+                        {product.farmer}
+                      </span>
                     </div>
-                    <button
-                      className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200"
-                    >
+                    <button className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200">
                       Add to Cart
                     </button>
                   </div>

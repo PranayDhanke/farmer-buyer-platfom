@@ -2,14 +2,9 @@ import { fireFireStore } from "@/app/lib/Firebase/Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: any } }
-) {
+export async function GET(req: NextRequest) {
   try {
-    const par = await params;
-    const id = await par.id;
-
+    const { id } = await req.json();
     const docRef = doc(fireFireStore, "Products", id);
     const docDs = await getDoc(docRef);
 

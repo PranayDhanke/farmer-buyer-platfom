@@ -1,10 +1,11 @@
+import Image from "next/image";
 import { useState } from "react";
 import { FaShoppingCart, FaTrash } from "react-icons/fa";
 
 const Buyer_Cart = () => {
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
-  
+
   // Sample cart data (you should replace this with actual data, possibly passed in as props or fetched)
   const [cart, setCart] = useState([
     {
@@ -13,7 +14,7 @@ const Buyer_Cart = () => {
       farmer: "Farmer A",
       price: 100,
       quantity: 2,
-      image: "/path/to/image.jpg"
+      image: "/path/to/image.jpg",
     },
     {
       id: 2,
@@ -21,25 +22,40 @@ const Buyer_Cart = () => {
       farmer: "Farmer B",
       price: 200,
       quantity: 1,
-      image: "/path/to/image2.jpg"
-    }
+      image: "/path/to/image2.jpg",
+    },
   ]);
 
   const removeFromCart = (productId: number) => {
     // Remove item from the cart
-    setCart(cart.filter(item => item.id !== productId));
+    setCart(cart.filter((item) => item.id !== productId));
   };
 
-  const handleQuantityChange = (productId: number, action: "increase" | "decrease") => {
-    setCart(cart.map(item => 
-      item.id === productId ? {
-        ...item,
-        quantity: action === "increase" ? item.quantity + 1 : item.quantity > 1 ? item.quantity - 1 : 1
-      } : item
-    ));
+  const handleQuantityChange = (
+    productId: number,
+    action: "increase" | "decrease"
+  ) => {
+    setCart(
+      cart.map((item) =>
+        item.id === productId
+          ? {
+              ...item,
+              quantity:
+                action === "increase"
+                  ? item.quantity + 1
+                  : item.quantity > 1
+                  ? item.quantity - 1
+                  : 1,
+            }
+          : item
+      )
+    );
   };
 
-  const totalAmount = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalAmount = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
   return (
     <div className="font-sans bg-gray-50 relative z-10">
@@ -63,7 +79,10 @@ const Buyer_Cart = () => {
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Your Cart</h2>
-          <button onClick={() => setIsCartOpen(false)} className="text-gray-600">
+          <button
+            onClick={() => setIsCartOpen(false)}
+            className="text-gray-600"
+          >
             <FaTrash />
           </button>
         </div>
@@ -78,14 +97,19 @@ const Buyer_Cart = () => {
                   className="flex items-center justify-between bg-gray-50 p-5 rounded-lg shadow-sm"
                 >
                   <div className="flex items-center">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.name}
-                      className="w-16 h-16 object-cover mr-4"
+                      width={64} // Equivalent to 16 in Tailwind, but optimized by Next.js
+                      height={64}
+                      className="object-cover mr-4"
+                      loading="lazy"
                     />
                     <div>
                       <h3 className="font-bold">{item.name}</h3>
-                      <p className="text-sm text-gray-600">Farmer: {item.farmer}</p>
+                      <p className="text-sm text-gray-600">
+                        Farmer: {item.farmer}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -102,7 +126,9 @@ const Buyer_Cart = () => {
                     >
                       +
                     </button>
-                    <span className="ml-4 text-gray-700">₹{item.price * item.quantity}</span>
+                    <span className="ml-4 text-gray-700">
+                      ₹{item.price * item.quantity}
+                    </span>
                     <button
                       onClick={() => removeFromCart(item.id)}
                       className="ml-4 text-red-500"
@@ -120,7 +146,10 @@ const Buyer_Cart = () => {
 
             {/* Payment Method */}
             <div className="mt-6">
-              <label htmlFor="payment-method" className="block text-gray-700 mb-2">
+              <label
+                htmlFor="payment-method"
+                className="block text-gray-700 mb-2"
+              >
                 Select Payment Method
               </label>
               <select

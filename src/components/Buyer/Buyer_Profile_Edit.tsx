@@ -1,20 +1,32 @@
 "use client";
-import React, { useState } from "react";
-import Image from "next/image";
+import React, { ChangeEvent, useState } from "react";
 import Link from "next/link";
 
 const Buyer_Profile_Edit = () => {
-  const [formData, setFormData] = useState({
-    name: "Buyer Raj", // Example data
-    email: "buyer.raj@example.com",
-    phone: "9876543210",
-    profilePhoto: "https://randomuser.me/api/portraits/men/65.jpg",
-    location: "Punjab",
-    district: "Amritsar",
-    taluka: "Tarn Taran",
-    city: "Amritsar",
-    aadhar: "1234 5678 9101",
-    aadharPhoto: "https://randomuser.me/api/portraits/men/65.jpg",
+  interface FormData {
+    name: string;
+    email: string;
+    phone: string;
+    profilePhoto: File | null;
+    location: string;
+    district: string;
+    taluka: string;
+    city: string;
+    aadhar: string;
+    aadharPhoto: File | null;
+  }
+
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    phone: "",
+    profilePhoto: null,
+    location: "",
+    district: "",
+    taluka: "",
+    city: "",
+    aadhar: "",
+    aadharPhoto: null,
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -23,7 +35,7 @@ const Buyer_Profile_Edit = () => {
   const talukas = ["Tarn Taran", "Rajpura", "Khanna"];
   const cities = ["Amritsar", "Ludhiana", "Chandigarh"];
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement> ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -31,15 +43,15 @@ const Buyer_Profile_Edit = () => {
     });
   };
 
-  const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
     setFormData({
       ...formData,
       aadharPhoto: file,
     });
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle form submission logic
     console.log(formData);
@@ -312,7 +324,7 @@ const Buyer_Profile_Edit = () => {
                   )}
 
                   <p className="text-center text-sm text-gray-600 mt-6">
-                    Don't want to edit?{" "}
+                    Don&pos;t want to edit
                     <Link
                       href="/Buyer-Panel"
                       className="text-green-600 hover:text-green-800"

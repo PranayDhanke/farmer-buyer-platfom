@@ -1,5 +1,4 @@
-import React from "react";
-import { FaStar } from "react-icons/fa";
+import Image from "next/image";
 import Link from "next/link";
 
 const Buyer_Profile = () => {
@@ -21,10 +20,12 @@ const Buyer_Profile = () => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 m-10">
       {/* Profile Header */}
       <div className="bg-white rounded-lg shadow-xl p-6 flex flex-col items-center space-y-4">
-        <img
+        <Image
           src={buyer.profilePhoto}
           alt={buyer.name}
-          className="w-24 h-24 rounded-full object-cover"
+          width={96}
+          height={96}
+          className="rounded-full object-cover"
         />
         <h2 className="text-2xl font-bold text-gray-800">{buyer.name}</h2>
 
@@ -54,15 +55,26 @@ const Buyer_Profile = () => {
       {/* Buyer Details Section */}
       <div className="col-span-2 grid grid-rows-3 gap-6">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Buyer Details</h3>
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">
+            Buyer Details
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-gray-600"><span className="font-semibold">Name:</span> {buyer.name}</p>
-              <p className="text-gray-600"><span className="font-semibold">Aadhar Card No:</span> {buyer.aadhar}</p>
+              <p className="text-gray-600">
+                <span className="font-semibold">Name:</span> {buyer.name}
+              </p>
+              <p className="text-gray-600">
+                <span className="font-semibold">Aadhar Card No:</span>{" "}
+                {buyer.aadhar}
+              </p>
             </div>
             <div>
-              <p className="text-gray-600"><span className="font-semibold">Email:</span> {buyer.email}</p>
-              <p className="text-gray-600"><span className="font-semibold">Phone:</span> {buyer.phone}</p>
+              <p className="text-gray-600">
+                <span className="font-semibold">Email:</span> {buyer.email}
+              </p>
+              <p className="text-gray-600">
+                <span className="font-semibold">Phone:</span> {buyer.phone}
+              </p>
             </div>
           </div>
         </div>

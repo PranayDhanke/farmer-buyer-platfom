@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +11,7 @@ const Buyer_Login = () => {
     password: "",
   });
 
-  const handleChange = (e:any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -19,7 +19,7 @@ const Buyer_Login = () => {
     });
   };
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     router.push("/Buyer-Panel")
   };
@@ -97,13 +97,11 @@ const Buyer_Login = () => {
                     </Link>
                   </div>
                   <p className="text-center text-sm text-gray-600">
-                    Don't have an account?{" "}
+                    Don&apos;t have an account?
                     <Link
                       href="/create_account/Buyer"
                       className="text-green-600 hover:text-green-800"
-                    >
-                      Register here
-                    </Link>
+                    >Register here</Link>
                   </p>
                 </form>
               </div>

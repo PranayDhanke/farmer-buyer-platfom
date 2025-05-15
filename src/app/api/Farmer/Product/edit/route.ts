@@ -1,6 +1,6 @@
 import { fireFireStore } from "@/app/lib/Firebase/Firebase";
 import { supabase } from "@/app/lib/superbase/supabaseClient";
-import { collection, doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

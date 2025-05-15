@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
@@ -12,7 +12,7 @@ const Farmer_Login = () => {
     password: "",
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -20,7 +20,7 @@ const Farmer_Login = () => {
     });
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     const email = formData.email;
     const password = formData.password;
     e.preventDefault();
@@ -53,7 +53,7 @@ const Farmer_Login = () => {
         Cookies.remove("Uid");
         Cookies.remove("userSession");
       }
-    } catch (error) {
+    } catch {
       toast.error("Authentication Error");
     }
   };
@@ -132,7 +132,7 @@ const Farmer_Login = () => {
                     </Link>
                   </div>
                   <p className="text-center text-sm text-gray-600">
-                    Don't have an account?{" "}
+                    {"Don't have an account?"}
                     <Link
                       href="/create_account/Farmer"
                       className="text-green-600 hover:text-green-800"

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +8,9 @@ const ContactUs = () => {
     message: "",
   });
 
-  const handleInputChange = (e:any) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -16,7 +18,7 @@ const ContactUs = () => {
     });
   };
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     alert("Your message has been submitted!");
   };
@@ -29,7 +31,9 @@ const ContactUs = () => {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Contact Us</h1>
             <p className="mt-4 text-gray-600 text-lg">
-              We'd love to hear from you! Please fill out the form below to get in touch with us.
+              {
+                "We'd love to hear from you! Please fill out the form below to get in touch with us."
+              }
             </p>
           </div>
 
@@ -95,7 +99,9 @@ const ContactUs = () => {
 
           {/* Address Section */}
           <div className="mt-8 text-center">
-            <h2 className="text-2xl font-semibold text-gray-700">Our Address</h2>
+            <h2 className="text-2xl font-semibold text-gray-700">
+              Our Address
+            </h2>
             <p className="mt-4 text-gray-600">
               123 Farm Lane, Rural Town, State, 123456
             </p>

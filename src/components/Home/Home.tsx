@@ -1,10 +1,15 @@
 import React from "react";
-import Logo from "../../public/images/image.png";
 import Image from "next/image";
 import Link from "next/link";
 import List_Product from "../Products/List_Product";
-import { FaShoppingBasket, FaHandshake, FaUserShield, FaCartPlus, FaRegHandshake } from "react-icons/fa"; // Importing specific icons from react-icons
-
+import {
+  FaShoppingBasket,
+  FaHandshake,
+  FaUserShield,
+  FaCartPlus,
+  FaRegHandshake,
+} from "react-icons/fa"; // Importing specific icons from react-icons
+import images from "@/../public/images/photo-1464226184884-fa280b87c399.avif"
 const Home = () => {
   return (
     <div>
@@ -23,21 +28,30 @@ const Home = () => {
                     get fresh produce delivered to your doorstep.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <Link href={"/Products"} className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-full transition-all duration-200 transform hover:scale-105 flex items-center justify-center">
+                    <Link
+                      href={"/Products"}
+                      className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-full transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
+                    >
                       <FaShoppingBasket className="mr-2" />
                       Shop Now
                     </Link>
-                    <Link href={"/Farmer-Panel"} className="border border-green-600 text-green-600 hover:bg-green-50 font-medium px-6 py-3 rounded-full transition-all duration-200 transform hover:scale-105 flex items-center justify-center">
+                    <Link
+                      href={"/Farmer-Panel"}
+                      className="border border-green-600 text-green-600 hover:bg-green-50 font-medium px-6 py-3 rounded-full transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
+                    >
                       <FaHandshake className="mr-2" />
                       Sell as Farmer
                     </Link>
                   </div>
                 </div>
                 <div className="md:w-1/2 relative">
-                  <img
-                    src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                  <Image
+                    src={images}
                     alt="Farmers with fresh produce"
+                    width={600} // Width from URL (or choose based on layout)
+                    height={400} // You can adjust to match aspect ratio
                     className="rounded-lg shadow-xl w-full transform transition-transform duration-500 hover:scale-[1.02]"
+                    sizes="100vw"
                   />
                   <div className="absolute -bottom-5 -left-5 bg-white p-4 rounded-lg shadow-lg hidden md:flex items-center transform transition-transform duration-500 hover:scale-105">
                     <FaUserShield className="text-green-500 text-3xl mr-3" />
@@ -115,7 +129,10 @@ const Home = () => {
           <section className="py-12 md:py-16 bg-green-50">
             <List_Product />
             <div className="text-center mt-10">
-              <Link href={"/Products"} className="bg-white border border-green-600 text-green-600 hover:bg-green-50 font-medium px-6 py-3 rounded-full transition-all duration-200 transform hover:scale-105 inline-flex items-center">
+              <Link
+                href={"/Products"}
+                className="bg-white border border-green-600 text-green-600 hover:bg-green-50 font-medium px-6 py-3 rounded-full transition-all duration-200 transform hover:scale-105 inline-flex items-center"
+              >
                 View All Products
                 <span className="material-symbols-outlined ml-2">
                   arrow_forward

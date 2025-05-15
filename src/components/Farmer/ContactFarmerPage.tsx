@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { FaPaperclip } from 'react-icons/fa';
 import Link from 'next/link';
 
@@ -8,7 +8,7 @@ const ContactFarmerPage = () => {
     { sender: 'Farmer', text: 'Hello! How can I help you with your orders?' },
   ]);
   const [newMessage, setNewMessage] = useState('');
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -17,8 +17,8 @@ const ContactFarmerPage = () => {
     }
   };
 
-  const handleFileChange = (e:any) => {
-    const uploadedFile = e.target.files[0];
+  const handleFileChange = (e:ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = e.target.files?.[0] ?? null;
     if (uploadedFile) {
       setFile(uploadedFile);
     }

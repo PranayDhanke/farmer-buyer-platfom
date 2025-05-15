@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import mahaADD from "@/../public/data/mahaAddress.json"; // Make sure the path is correct
@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { VscLoading } from "react-icons/vsc";
 import { LiaCheckCircle } from "react-icons/lia";
-``;
+
 const Farmer_Register = () => {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -15,7 +15,22 @@ const Farmer_Register = () => {
   const [loading, setloading] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
 
-  const [formData, setFormData] = useState({
+  interface FormData {
+    name: string;
+    email: string;
+    password: string;
+    phone: string;
+    profilePhoto: File | null;
+    district: string;
+    taluka: string;
+    city: string;
+    aadhar: string;
+    mainCrops: string;
+    aadharPhoto: File | null;
+    farmType: string;
+  }
+
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     password: "",
@@ -27,7 +42,7 @@ const Farmer_Register = () => {
     aadhar: "",
     mainCrops: "",
     aadharPhoto: null,
-    farmType: "", // Adding farm type
+    farmType: "",
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -40,13 +55,13 @@ const Farmer_Register = () => {
   useEffect(() => {
     // Assuming mahaADD is structured with districts having a key for each district
     const districtNames = Object.keys(mahaADD.Maharashtra.districts).map(
-      (districtKey: any) =>
+      (districtKey) =>
         mahaADD.Maharashtra.districts[districtKey].districtNameEnglish
     );
     setDistricts(districtNames);
   }, []);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -54,23 +69,25 @@ const Farmer_Register = () => {
     });
   };
 
-  const handleFileChanges = (e: any) => {
-    const file = e.target.files[0];
+  const handleFileChanges = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+
     if (file && file.size > 500 * 1024) {
-      toast.warn("File size must be less than 500 kb");
+      toast.warn("File size must be less than 500 KB");
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
       return;
     }
+
     setFormData({
       ...formData,
       profilePhoto: file,
     });
   };
 
-  const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
     if (file && file.size > 500 * 1024) {
       toast.warn("File size must be less than 500 kb");
       if (fileInputRef.current) {
@@ -84,7 +101,7 @@ const Farmer_Register = () => {
     });
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formDataToSend = new FormData();
@@ -137,7 +154,7 @@ const Farmer_Register = () => {
         toast.error("Error While Register");
         // Handle error (e.g., show an error message)
       }
-    } catch (error) {
+    } catch {
       toast.error("Registration Error");
     }
   };
@@ -154,7 +171,7 @@ const Farmer_Register = () => {
   useEffect(() => {
     if (formData.district) {
       const districtData = mahaADD.Maharashtra.districts.find(
-        (district: any) => district.districtNameEnglish === formData.district
+        (district) => district.districtNameEnglish === formData.district
       );
 
       if (districtData) {

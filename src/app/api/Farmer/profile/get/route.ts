@@ -5,8 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const { uid } = await req.json();
-
-    const strUid = uid.toString()
+    
     const userDocRef = doc(fireFireStore, `farmers/${uid}`);
 
     const snapshot = await getDoc(userDocRef);

@@ -24,7 +24,7 @@ const Buyer_Register = () => {
   const talukas = ["Taluka 1", "Taluka 2", "Taluka 3"];
   const cities = ["City 1", "City 2", "City 3"];
 
-  const handleChange = (e:any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -32,15 +32,15 @@ const Buyer_Register = () => {
     });
   };
 
-  const handleFileChange = (e:any) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     setFormData({
       ...formData,
       [e.target.name]: file,
     });
   };
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle form submission logic
     console.log(formData);

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -7,11 +7,25 @@ import CryptoJS from "crypto-js";
 import { VscLoading } from "react-icons/vsc";
 import { LiaCheckCircle } from "react-icons/lia";
 
-const Farmer_Prod_AddEdit = ({ isEdit, id }: { isEdit: boolean; id: any }) => {
+const Farmer_Prod_AddEdit = ({
+  isEdit,
+  id,
+}: {
+  isEdit: boolean;
+  id: string;
+}) => {
   const router = useRouter();
 
-  const [products, setProducts] = useState<any[]>([]);
-  const [newProduct, setNewProduct] = useState<any>({
+  interface Product {
+    id: number;
+    prod_name: string;
+    price: number | string;
+    description: string;
+    image: File | null; // assuming image could be null or a string URL
+    category: string;
+  }
+
+  const [newProduct, setNewProduct] = useState<Product>({
     id: 0,
     prod_name: "",
     price: 0,
@@ -19,7 +33,7 @@ const Farmer_Prod_AddEdit = ({ isEdit, id }: { isEdit: boolean; id: any }) => {
     image: null,
     category: "", // Added category field
   });
-  const [isEditing, setIsEditing] = useState<boolean>(isEdit);
+  const [isEditing] = useState<boolean>(isEdit);
   const [loading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -45,7 +59,7 @@ const Farmer_Prod_AddEdit = ({ isEdit, id }: { isEdit: boolean; id: any }) => {
           );
           setUid(decUID);
         }
-      } catch (error) {
+      } catch {
         toast.error("Error");
       }
     };
@@ -55,11 +69,12 @@ const Farmer_Prod_AddEdit = ({ isEdit, id }: { isEdit: boolean; id: any }) => {
       const loadEdit = async () => {
         try {
           const docId = await id;
-          const res = await fetch(`/api/Farmer/Product/getSingle/${docId}`, {
-            method: "GET",
+          const res = await fetch(`/api/Farmer/Product/getSingle/`, {
+            method: "POST",
             headers: {
               "Content-Type": "Application/json",
             },
+            body:JSON.stringify({id:docId})
           });
 
           if (res.ok) {
@@ -68,17 +83,17 @@ const Farmer_Prod_AddEdit = ({ isEdit, id }: { isEdit: boolean; id: any }) => {
 
             setNewProduct(subdata);
           }
-        } catch (error) {
+        } catch {
           toast.error("Error while Loading the product data");
         }
       };
 
       loadEdit();
     }
-  }, []);
+  }, [id, isEdit]);
 
-  const handleFileChanges = (e: any) => {
-    const file = e.target.files[0];
+  const handleFileChanges = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
 
     setNewProduct({
       ...newProduct,
@@ -113,7 +128,7 @@ const Farmer_Prod_AddEdit = ({ isEdit, id }: { isEdit: boolean; id: any }) => {
     formData.append("description", newProduct.description);
     formData.append("category", newProduct.category);
     if (newProduct.image) {
-      toast.loading("Wait Image is Uploading")
+      toast.loading("Wait Image is Uploading");
       formData.append("prod_image", newProduct.image);
     }
 
@@ -124,7 +139,7 @@ const Farmer_Prod_AddEdit = ({ isEdit, id }: { isEdit: boolean; id: any }) => {
 
     if (res.ok) {
       toast.success("Product added successfully");
-      setIsSuccess(true)
+      setIsSuccess(true);
       router.push("/Farmer-Panel");
     } else {
       toast.error("Error While Adding Product");
@@ -143,7 +158,7 @@ const Farmer_Prod_AddEdit = ({ isEdit, id }: { isEdit: boolean; id: any }) => {
     formData.append("category", newProduct.category);
 
     if (newProduct.image) {
-      toast.loading("Wait Image are Uploading")
+      toast.loading("Wait Image are Uploading");
       formData.append("prod_image", newProduct.image);
     }
 
@@ -157,9 +172,9 @@ const Farmer_Prod_AddEdit = ({ isEdit, id }: { isEdit: boolean; id: any }) => {
       if (res.ok) {
         setIsSuccess(true);
         toast.success("Product Updated successfully");
-        router.push("/Farmer-Panel")
+        router.push("/Farmer-Panel");
       }
-    } catch (error) {
+    } catch {
       toast.error("Error While Updating the Product ");
     }
   };

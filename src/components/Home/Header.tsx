@@ -8,7 +8,7 @@ import { FiChevronDown } from "react-icons/fi";
 import Buyer_Cart from "../Buyer/Buyer_Cart";
 import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import CryptoJS from "crypto-js";
 
 const Header = () => {

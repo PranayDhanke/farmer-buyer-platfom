@@ -9,10 +9,10 @@ import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
 import FarmerProductSkeleton from "../skeleton/FarmerProductSkeleton";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Farmer_Product = () => {
-
-  const router = useRouter()
+  const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -29,7 +29,7 @@ const Farmer_Product = () => {
       category: "",
       price: 0,
       description: "",
-      imageUrl: null,
+      imageUrl: "",
     },
   ]);
   useEffect(() => {
@@ -54,17 +54,16 @@ const Farmer_Product = () => {
           }
 
           // Step 2: Load farmer profile
-          const profileRes = await fetch("/api/Farmer/Product/get", {
+          const profileRes = await fetch(`/api/Farmer/Product/get`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ uid: uid }),
+            body:JSON.stringify({id:uid})
           });
 
           if (profileRes.ok) {
             const productData = await profileRes.json();
 
             const mainData = productData.products;
-            
+
             if (mainData) {
               setCount(mainData.length); // set count first
               setProduct(mainData);
@@ -105,26 +104,26 @@ const Farmer_Product = () => {
     return isCategoryMatch && isPriceMatch && isSearchMatch;
   });
 
-  const deleteProduct = async(docId : string) => {
-    const response = window.confirm("Are you sure you Want to delete Product")
+  const deleteProduct = async (docId: string) => {
+    const response = window.confirm("Are you sure you Want to delete Product");
 
-    if(response){
-      try{
-         const deleteRes = await fetch("/api/Farmer/Product/delete", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ uid: docId }),
-          });
+    if (response) {
+      try {
+        const deleteRes = await fetch("/api/Farmer/Product/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uid: docId }),
+        });
 
-          if(deleteRes.ok){
-            toast.success("Product Deleted Successfully")
-            router.push("/Farmer-Panel")
-          }
-      }catch(error){
-        toast.error("Error while Deleting the Product")
+        if (deleteRes.ok) {
+          toast.success("Product Deleted Successfully");
+          router.push("/Farmer-Panel");
+        }
+      } catch {
+        toast.error("Error while Deleting the Product");
       }
     }
-  }
+  };
 
   return (
     <div className="font-sans bg-gray-50">
@@ -208,10 +207,13 @@ const Farmer_Product = () => {
                         className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
                       >
                         <div className="relative">
-                          <img
+                          <Image
                             src={product.imageUrl}
                             alt={product.prod_name}
-                            className="w-full h-48 object-cover"
+                            width={800} // You can adjust width based on layout needs
+                            height={192} // Matches h-48 (12rem = 192px)
+                            className="w-full object-cover"
+                            sizes="100vw"
                           />
                         </div>
                         <div className="p-4">
@@ -239,7 +241,9 @@ const Farmer_Product = () => {
                               className="p-2 px-4 flex justify-center items-center rounded-sm bg-red-300 hover:bg-red-500 text-white gap-1"
                             >
                               <MdDelete />
-                              <span onClick={()=>deleteProduct(product.id)}>Delete</span>
+                              <span onClick={() => deleteProduct(product.id)}>
+                                Delete
+                              </span>
                             </Link>
                           </div>
                         </div>

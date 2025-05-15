@@ -1,22 +1,25 @@
-"use client"; 
-import React, { useState } from "react"; 
-import { FaSearch } from "react-icons/fa"; 
-import { IoIosFunnel } from "react-icons/io"; 
+"use client";
+import React, { useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import { IoIosFunnel } from "react-icons/io";
 
-import farmers from "../../../public/data/farmer.json"
+import farmers from "../../../public/data/farmer.json";
 import Link from "next/link";
+import Image from "next/image";
 
-const Farmer_List = () => { 
+const Farmer_List = () => {
   // State for search input and filters
-  const [searchQuery, setSearchQuery] = useState(""); 
-  const [selectedState, setSelectedState] = useState("All"); 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedState, setSelectedState] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false); // State for opening/closing filter dropdown
 
   // Filtering farmers based on search query and state
   const filteredFarmers = farmers.filter((farmer) => {
-    const isStateMatch = selectedState === "All" || farmer.address.state === selectedState;
-    const isSearchMatch = farmer.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          farmer.mainCrop.toLowerCase().includes(searchQuery.toLowerCase());
+    const isStateMatch =
+      selectedState === "All" || farmer.address.state === selectedState;
+    const isSearchMatch =
+      farmer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      farmer.mainCrop.toLowerCase().includes(searchQuery.toLowerCase());
     return isStateMatch && isSearchMatch;
   });
 
@@ -35,7 +38,10 @@ const Farmer_List = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <FaSearch className="absolute top-3 right-3 text-gray-500" size={20} />
+              <FaSearch
+                className="absolute top-3 right-3 text-gray-500"
+                size={20}
+              />
             </div>
 
             {/* Filter Button */}
@@ -81,11 +87,13 @@ const Farmer_List = () => {
                   key={farmer.id}
                   className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
                 >
-                  <div className="relative">
-                    <img
+                  <div className="relative w-full h-48">
+                    <Image
                       src={farmer.image}
                       alt={farmer.name}
-                      className="w-full h-48 object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="100vw"
                     />
                   </div>
                   <div className="p-4">
@@ -95,14 +103,19 @@ const Farmer_List = () => {
                         {farmer.rating} ★
                       </span>
                     </div>
-                    <p className="text-gray-600 text-sm mb-3">{farmer.mainCrop}</p>
+                    <p className="text-gray-600 text-sm mb-3">
+                      {farmer.mainCrop}
+                    </p>
                     <div className="text-gray-600 text-sm mb-5">
                       <span>{farmer.address.taluka}, </span>
                       <span>{farmer.address.district}, </span>
                       <span>{farmer.address.city}, </span>
                       <span>{farmer.address.state}</span>
                     </div>
-                    <Link href={`/farmers/${farmer.name}`} className="w-full p-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors duration-200">
+                    <Link
+                      href={`/farmers/${farmer.name}`}
+                      className="w-full p-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors duration-200"
+                    >
                       View Detail
                     </Link>
                   </div>

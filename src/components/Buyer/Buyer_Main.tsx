@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 // Example Product Data (replace with actual data or state)
 const products = [
@@ -42,8 +43,9 @@ const Buyer_Main = () => {
 
         {/* Optionally, you can also add other actions here */}
       </div>
-      <h2 className="text-3xl font-semibold text-gray-800 mb-8">My Purchased Products</h2>
-
+      <h2 className="text-3xl font-semibold text-gray-800 mb-8">
+        My Purchased Products
+      </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {products.map((product) => (
@@ -51,12 +53,16 @@ const Buyer_Main = () => {
             key={product.id}
             className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center space-y-4"
           >
-            <img
+            <Image
               src={product.image}
               alt={product.name}
-              className="w-32 h-32 object-cover rounded-md"
+              width={128} // Equivalent to w-32 (32 * 4px = 128px)
+              height={128} // Equivalent to h-32 (32 * 4px = 128px)
+              className="object-cover rounded-md"
             />
-            <h3 className="text-xl font-semibold text-gray-800">{product.name}</h3>
+            <h3 className="text-xl font-semibold text-gray-800">
+              {product.name}
+            </h3>
             <p className="text-gray-600">Price: {product.price}</p>
             <p className="text-gray-600">{product.description}</p>
 
@@ -65,7 +71,9 @@ const Buyer_Main = () => {
                 <span key={index}>&#9733;</span> // Star character for rating
               ))}
               {product.rating % 1 > 0 && <span>&#9733;</span>} {/* Half Star */}
-              <span className="ml-2 text-gray-600">Rating: {product.rating}</span>
+              <span className="ml-2 text-gray-600">
+                Rating: {product.rating}
+              </span>
             </div>
 
             <div className="w-full mt-4">
