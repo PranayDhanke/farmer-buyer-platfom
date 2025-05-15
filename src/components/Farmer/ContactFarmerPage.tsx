@@ -99,7 +99,7 @@ const ContactFarmerPage = () => {
         {/* Send File Button */}
         {file && (
           <div className="mt-4 flex justify-between items-center">
-            <span className="text-gray-600">{file}</span>
+            <span className="text-gray-600">{}</span>
             <button
               onClick={handleSendFile}
               className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"

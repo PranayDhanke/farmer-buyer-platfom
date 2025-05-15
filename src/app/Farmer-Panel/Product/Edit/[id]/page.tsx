@@ -1,18 +1,20 @@
+'use client';
+
 import Farmer_Prod_AddEdit from "@/components/Farmer/Farmer_Prod_AddEdit";
 import Header from "@/components/Home/Header";
+import { useParams } from "next/navigation";
 import React from "react";
 
-const  page = async ({ params}: { params: { id: string } }) => {
+const Page = () => {
+  const param = useParams<{ id: string }>();
+  const { id } = param;
 
-  const prd = await params ;
-
-  const docId = await prd.id;
   return (
     <div>
       <Header />
-      <Farmer_Prod_AddEdit isEdit={true} id={docId} />
+      <Farmer_Prod_AddEdit isEdit={true} id={id} />
     </div>
   );
 };
 
-export default page;
+export default Page;

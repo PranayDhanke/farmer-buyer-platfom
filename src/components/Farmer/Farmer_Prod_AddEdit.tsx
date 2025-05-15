@@ -69,11 +69,8 @@ const Farmer_Prod_AddEdit = ({
       const loadEdit = async () => {
         try {
           const docId = await id;
-          const res = await fetch(`/api/Farmer/Product/getSingle/`, {
+          const res = await fetch(`/api/Farmer/Product/getSingle`, {
             method: "POST",
-            headers: {
-              "Content-Type": "Application/json",
-            },
             body:JSON.stringify({id:docId})
           });
 
@@ -124,7 +121,7 @@ const Farmer_Prod_AddEdit = ({
 
     formData.append("uid", uid);
     formData.append("prod_name", newProduct.prod_name);
-    formData.append("price", newProduct.price);
+    formData.append("price" ,(newProduct.price.toString()));
     formData.append("description", newProduct.description);
     formData.append("category", newProduct.category);
     if (newProduct.image) {
@@ -153,7 +150,7 @@ const Farmer_Prod_AddEdit = ({
     const formData = new FormData();
     formData.append("uid", docId);
     formData.append("prod_name", newProduct.prod_name);
-    formData.append("price", newProduct.price);
+    formData.append("price" , newProduct.price.toString()) ;
     formData.append("description", newProduct.description);
     formData.append("category", newProduct.category);
 

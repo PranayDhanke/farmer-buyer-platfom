@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import FarmerProfileSkeleton from "../skeleton/FarmerProfileSkeleton";
 import CryptoJS from "crypto-js";
 import Image from "next/image";
+import image from "@/../public/images/image.png"
 
 const Farmer_Profile = () => {
   const [isUser, setisUser] = useState(false);
@@ -118,7 +119,7 @@ const Farmer_Profile = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 m-10">
               <div className="bg-white rounded-lg shadow-xl p-6 flex flex-col items-center space-y-4">
                 <Image
-                  src={farmer.profilePhoto}
+                  src={farmer.profilePhoto || image}
                   alt={farmer.name}
                   width={96}
                   height={96}

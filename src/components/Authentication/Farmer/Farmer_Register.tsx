@@ -52,14 +52,15 @@ const Farmer_Register = () => {
   const farmTypes = ["Organic", "Non-Organic", "Hydroponics", "Agroforestry"];
 
   // Load the districts from the JSON data
-  useEffect(() => {
-    // Assuming mahaADD is structured with districts having a key for each district
-    const districtNames = Object.keys(mahaADD.Maharashtra.districts).map(
-      (districtKey) =>
-        mahaADD.Maharashtra.districts[districtKey].districtNameEnglish
-    );
-    setDistricts(districtNames);
-  }, []);
+useEffect(() => {
+  const data = mahaADD;
+
+  const districtNames = data.Maharashtra.districts.map(
+    (district) => district.districtNameEnglish
+  );
+
+  setDistricts(districtNames);
+}, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -169,17 +170,21 @@ const Farmer_Register = () => {
 
   // Fetch talukas and cities when the district is selected
   useEffect(() => {
-    if (formData.district) {
-      const districtData = mahaADD.Maharashtra.districts.find(
-        (district) => district.districtNameEnglish === formData.district
-      );
 
-      if (districtData) {
-        setTalukas(Object.keys(districtData.talukas)); // Assuming talukas is an object
-        setCities(districtData.talukas[formData.taluka] || []); // Set cities based on selected taluka
-      }
-    }
-  }, [formData.district, formData.taluka]);
+    const mahaData = mahaADD ;
+  const selectedDistrict = mahaData.Maharashtra.districts.find(
+    (district) => district.districtNameEnglish === formData.district
+  );
+
+  if (selectedDistrict) {
+    const talukaNames = Object.keys(selectedDistrict.talukas);
+    setTalukas(talukaNames);
+
+    const selectedCities =
+      selectedDistrict.talukas[formData.taluka as keyof typeof selectedDistrict.talukas] || [];
+    setCities(selectedCities);
+  }
+}, [formData.district, formData.taluka]);
 
   return (
     <div id="farmer-register" className="font-sans bg-white">

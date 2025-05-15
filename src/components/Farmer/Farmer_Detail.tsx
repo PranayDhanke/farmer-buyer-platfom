@@ -6,6 +6,7 @@ import { FaSearch } from "react-icons/fa";
 import farmerData from "../../../public/data/farmer.json";
 import products from "../../../public/data/product.json";
 import Image from "next/image";
+import image from "@/../public/images/image.png"
 
 const Farmer_Detail = ({ farmer_name }: { farmer_name: string }) => {
   interface Product {
@@ -113,7 +114,7 @@ const Farmer_Detail = ({ farmer_name }: { farmer_name: string }) => {
           <div className="bg-white rounded-xl overflow-hidden shadow-md p-6 mb-8">
             <div className="flex items-center mb-6">
               <Image
-                src={selectedFarmer.image}
+                src={selectedFarmer.image || image}
                 alt={selectedFarmer.name}
                 width={96} // 24 * 4 = 96px
                 height={96}
