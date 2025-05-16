@@ -89,8 +89,10 @@ const Farmer_Profile = () => {
               });
   
               setloading(false);
+              return;
             } else {
               toast.error("Farmer profile not found.");
+              return;
             }
           } else {
             toast.error("Failed to load profile.");

@@ -20,23 +20,21 @@ const Farmer_Login = () => {
     });
   };
 
-  const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
-    const email = formData.email;
-    const password = formData.password;
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const { email, password } = formData;
+
     try {
       const response = await fetch("/api/Farmer/Authentication/login", {
         method: "POST",
-        headers: { "Content-Type": "Application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
-      if (response.ok) {
-        toast.success("Login Suceess");
 
-        const data = await response.json();
+      const data = await response.json();
+
+      if (response.ok && response.status === 200) {
+        toast.success("Login successful");
 
         const idToken = data.idToken;
 
@@ -48,13 +46,14 @@ const Farmer_Login = () => {
 
         router.push("/Farmer-Panel/Profile");
       } else {
-        toast.error("Authentication Error");
+        toast.error(data.error || "Authentication failed");
+
         Cookies.remove("firebase_token");
         Cookies.remove("Uid");
         Cookies.remove("userSession");
       }
     } catch {
-      toast.error("Authentication Error");
+      toast.error("Authentication Error. Please try again.");
     }
   };
 

@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
+
     const userCred = await signInWithEmailAndPassword(
       fireAuth,
       email,
@@ -13,11 +14,10 @@ export async function POST(req: NextRequest) {
 
     const idToken = await userCred.user.getIdToken();
 
-    return NextResponse.json( { idToken, authenticated: true });
-  } catch (error) {
-    console.log("ERROR IS HEERE");
-    return NextResponse.json({
-      error: error || "Something went wrong",
-    });
+    return NextResponse.json({ idToken, authenticated: true }, { status: 200 });
+
+  } catch {
+
+    return NextResponse.json({ error: "Invalid Credentials" }, { status:401 });
   }
 }

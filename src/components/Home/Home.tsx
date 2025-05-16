@@ -8,8 +8,9 @@ import {
   FaUserShield,
   FaCartPlus,
   FaRegHandshake,
+  FaArrowRight,
 } from "react-icons/fa"; // Importing specific icons from react-icons
-import images from "@/../public/images/photo-1464226184884-fa280b87c399.avif"
+import images from "@/../public/images/photo-1464226184884-fa280b87c399.png"
 const Home = () => {
   return (
     <div>
@@ -126,8 +127,10 @@ const Home = () => {
           </section>
 
           {/* Featured Products Section */}
-          <section className="py-12 md:py-16 bg-green-50">
-            <List_Product />
+          <section className="py-12 md:py-16   bg-green-50">
+            <div className="">
+              <List_Product />
+            </div>
             <div className="text-center mt-10">
               <Link
                 href={"/Products"}
@@ -135,7 +138,7 @@ const Home = () => {
               >
                 View All Products
                 <span className="material-symbols-outlined ml-2">
-                  arrow_forward
+                  <FaArrowRight />
                 </span>
               </Link>
             </div>

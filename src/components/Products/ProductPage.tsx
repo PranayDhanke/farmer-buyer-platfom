@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoIosFunnel } from "react-icons/io";
-
-import products from "../../../public/data/product.json";
+import lims from "@/../public/images/image.png";
+import bgims from "@/../public/images/photo-1464226184884-fa280b87c399.png";
 import Image from "next/image";
 
 const ProductPage = () => {
@@ -11,6 +11,35 @@ const ProductPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const [products, setProducts] = useState([
+    {
+      name: "",
+      id: "",
+      prod_name: "",
+      price: 0,
+      category: "",
+      description: "",
+      imageUrl: "",
+      profilePhoto: "",
+    },
+  ]);
+
+  useEffect(() => {
+    const getDocs = async () => {
+      const res = await fetch("/api/Farmer/Product/list", {
+        method: "GET",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const prodData = await data.products;
+        setProducts(prodData);
+
+      }
+    };
+    getDocs();
+  }, []);
 
   const filteredProducts = products.filter((product) => {
     const isCategoryMatch =
@@ -24,7 +53,7 @@ const ProductPage = () => {
       (selectedPriceRange === "Above 200" && product.price > 200);
 
     const isSearchMatch =
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.prod_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase());
 
     return isCategoryMatch && isPriceMatch && isSearchMatch;
@@ -108,19 +137,16 @@ const ProductPage = () => {
                 >
                   <div className="relative">
                     <Image
-                      src={product.image}
-                      alt={product.name}
+                      src={product.imageUrl || bgims}
+                      alt={product.prod_name}
                       width={500} // or any estimated width
                       height={192} // height equivalent to h-48 (48 × 4 = 192px)
-                      className="w-full h-48 object-cover"
+                      className="object-cover"
                     />
-                    <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">
-                      Best Seller
-                    </div>
                   </div>
                   <div className="p-4">
                     <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-bold text-lg">{product.name}</h3>
+                      <h3 className="font-bold text-lg">{product.prod_name}</h3>
                       <span className="text-green-600 font-bold">
                         ₹{product.price}/kg
                       </span>
@@ -129,15 +155,17 @@ const ProductPage = () => {
                       {product.description}
                     </p>
                     <div className="flex items-center mb-3">
-                      <Image
-                        src="https://randomuser.me/api/portraits/women/65.jpg"
-                        alt="Farmer"
-                        width={32}
-                        height={32}
-                        className="rounded-full mr-2"
-                      />
+                      <div className="relative w-8 h-8 mr-2">
+                        <Image
+                          src={product.profilePhoto || lims}
+                          alt="Farmer"
+                          fill
+                          sizes="200px"
+                          className="rounded-full object-cover"
+                        />
+                      </div>
                       <span className="text-sm text-gray-700">
-                        {product.farmer}
+                        {product.name}
                       </span>
                     </div>
                     <button className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200">

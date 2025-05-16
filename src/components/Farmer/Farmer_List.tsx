@@ -1,22 +1,51 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoIosFunnel } from "react-icons/io";
-
-import farmers from "../../../public/data/farmer.json";
 import Link from "next/link";
 import Image from "next/image";
 
+import lsm from "@/../public/images/image.png";
 const Farmer_List = () => {
   // State for search input and filters
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedState, setSelectedState] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false); // State for opening/closing filter dropdown
 
+  const [farmers, setFarmer] = useState([
+    {
+      id: "",
+      name: "",
+      mainCrop: "",
+      rating: 0,
+      state: "",
+      city: "",
+      district: "",
+      taluka: "",
+      profilePhoto: "",
+      farmType: "",
+    },
+  ]);
+
+  useEffect(() => {
+    const getDocs = async () => {
+      const res = await fetch("/api/Farmer/list", {
+        method: "GET",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const farmerData = await data.farmers;
+        setFarmer(farmerData);
+      }
+    };
+    getDocs();
+  }, []);
+
   // Filtering farmers based on search query and state
   const filteredFarmers = farmers.filter((farmer) => {
     const isStateMatch =
-      selectedState === "All" || farmer.address.state === selectedState;
+      selectedState === "All" || farmer.state === selectedState;
     const isSearchMatch =
       farmer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       farmer.mainCrop.toLowerCase().includes(searchQuery.toLowerCase());
@@ -89,11 +118,12 @@ const Farmer_List = () => {
                 >
                   <div className="relative w-full h-48">
                     <Image
-                      src={farmer.image}
+                      src={farmer.profilePhoto || lsm}
                       alt={farmer.name}
                       fill
                       className="object-cover"
-                      sizes="100vw"
+                      sizes="500px"
+                      priority
                     />
                   </div>
                   <div className="p-4">
@@ -107,13 +137,13 @@ const Farmer_List = () => {
                       {farmer.mainCrop}
                     </p>
                     <div className="text-gray-600 text-sm mb-5">
-                      <span>{farmer.address.taluka}, </span>
-                      <span>{farmer.address.district}, </span>
-                      <span>{farmer.address.city}, </span>
-                      <span>{farmer.address.state}</span>
+                      <span>{farmer.taluka}, </span>
+                      <span>{farmer.district}, </span>
+                      <span>{farmer.city}, </span>
+                      <span>{farmer.state}</span>
                     </div>
                     <Link
-                      href={`/farmers/${farmer.name}`}
+                      href={`/farmers/${farmer.id}`}
                       className="w-full p-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors duration-200"
                     >
                       View Detail
