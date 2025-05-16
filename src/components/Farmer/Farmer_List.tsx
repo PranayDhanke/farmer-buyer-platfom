@@ -6,12 +6,14 @@ import Link from "next/link";
 import Image from "next/image";
 
 import lsm from "@/../public/images/image.png";
+import FarmerListSkeleton from "../skeleton/FarmerListSkeleton";
 const Farmer_List = () => {
   // State for search input and filters
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedState, setSelectedState] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false); // State for opening/closing filter dropdown
 
+  const [loading, setloding] = useState(true);
   const [farmers, setFarmer] = useState([
     {
       id: "",
@@ -37,6 +39,7 @@ const Farmer_List = () => {
         const data = await res.json();
         const farmerData = await data.farmers;
         setFarmer(farmerData);
+        setloding(false)
       }
     };
     getDocs();
@@ -110,47 +113,55 @@ const Farmer_List = () => {
               No Farmers Found
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {filteredFarmers.map((farmer) => (
-                <div
-                  key={farmer.id}
-                  className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
-                >
-                  <div className="relative w-full h-48">
-                    <Image
-                      src={farmer.profilePhoto || lsm}
-                      alt={farmer.name}
-                      fill
-                      className="object-cover"
-                      sizes="500px"
-                      priority
-                    />
-                  </div>
-                  <div className="p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-bold text-lg">{farmer.name}</h3>
-                      <span className="text-yellow-500 font-bold">
-                        {farmer.rating} ★
-                      </span>
-                    </div>
-                    <p className="text-gray-600 text-sm mb-3">
-                      {farmer.mainCrop}
-                    </p>
-                    <div className="text-gray-600 text-sm mb-5">
-                      <span>{farmer.taluka}, </span>
-                      <span>{farmer.district}, </span>
-                      <span>{farmer.city}, </span>
-                      <span>{farmer.state}</span>
-                    </div>
-                    <Link
-                      href={`/farmers/${farmer.id}`}
-                      className="w-full p-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors duration-200"
-                    >
-                      View Detail
-                    </Link>
-                  </div>
+            <div>
+              {loading ? (
+                <div>
+                  <FarmerListSkeleton count={6} />
                 </div>
-              ))}
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {filteredFarmers.map((farmer) => (
+                    <div
+                      key={farmer.id}
+                      className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
+                    >
+                      <div className="relative w-full h-48">
+                        <Image
+                          src={farmer.profilePhoto || lsm}
+                          alt={farmer.name}
+                          fill
+                          className="object-cover"
+                          sizes="500px"
+                          priority
+                        />
+                      </div>
+                      <div className="p-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <h3 className="font-bold text-lg">{farmer.name}</h3>
+                          <span className="text-yellow-500 font-bold">
+                            {farmer.rating} ★
+                          </span>
+                        </div>
+                        <p className="text-gray-600 text-sm mb-3">
+                          {farmer.mainCrop}
+                        </p>
+                        <div className="text-gray-600 text-sm mb-5">
+                          <span>{farmer.taluka}, </span>
+                          <span>{farmer.district}, </span>
+                          <span>{farmer.city}, </span>
+                          <span>{farmer.state}</span>
+                        </div>
+                        <Link
+                          href={`/farmers/${farmer.id}`}
+                          className="w-full p-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors duration-200"
+                        >
+                          View Detail
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

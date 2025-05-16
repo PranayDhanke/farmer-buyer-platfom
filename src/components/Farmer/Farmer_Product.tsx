@@ -213,7 +213,7 @@ const Farmer_Product = () => {
                             width={800} // You can adjust width based on layout needs
                             height={192} // Matches h-48 (12rem = 192px)
                             className="w-full object-cover"
-                            sizes="100vw"
+                            sizes="500px"
                           />
                         </div>
                         <div className="p-4">

@@ -3,173 +3,193 @@ import React, { useState, useEffect } from "react";
 import { FaStar } from "react-icons/fa";
 import { IoIosFunnel } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
-import farmerData from "../../../public/data/farmer.json";
-import products from "../../../public/data/product.json";
 import Image from "next/image";
-import image from "@/../public/images/image.png"
+import image from "@/../public/images/image.png";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import ProductDetailSkeleton from "../skeleton/ProductDetailSkeleton";
+import FarmerDetailListSkeleton from "../skeleton/FarmerDetailListSkeleton";
 
-const Farmer_Detail = ({ farmer_name }: { farmer_name: string }) => {
-  interface Product {
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-    farmer: string;
-    image: string;
-    category: string;
-    rating: number;
-  }
+const Farmer_Detail = () => {
+  const pathname = usePathname();
+  const [selectedFarmers, setSelectedFarmers] = useState([
+    {
+      id: "",
+      name: "",
+      taluka: "",
+      district: "",
+      city: "",
+      state: "",
+      profilePhoto: "",
+      rating: 0,
+      mainCrops: "",
+      farmType: "",
+    },
+  ]);
 
-  interface Address {
-    taluka: string;
-    district: string;
-    city: string;
-    state: string;
-  }
+  const [productList, setProductList] = useState([
+    {
+      id: "",
+      prod_name: "",
+      description: "",
+      price: 0,
+      imageUrl: "",
+      category: "",
+      rating: 0,
+    },
+  ]);
 
-  interface Farmer {
-    id: number;
-    name: string;
-    image: string | null;
-    rating: number;
-    address: Address;
-    mainCrop: string;
-    farmType: string;
-  }
+  const [famerload, setfarmerLoad] = useState(true);
+  const [prodload, setProdLoad] = useState(true);
 
-  const [selectedFarmer, setSelectedFarmer] = useState<Farmer | null>(null);
+  useEffect(() => {
+    const path = pathname.replace("/farmers/", "");
+
+    const loadData = async () => {
+      const profileRes = await fetch("/api/Farmer/profile/get", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: path }),
+      });
+
+      if (profileRes.ok) {
+        const profileData = await profileRes.json();
+        const mainData = await profileData.data;
+        if (mainData) {
+          setSelectedFarmers([mainData]);
+          setfarmerLoad(false);
+        }
+      }
+
+      const prodRes = await fetch(`/api/Farmer/Product/get`, {
+        method: "POST",
+        body: JSON.stringify({ id: path }),
+      });
+
+      if (prodRes.ok) {
+        const productData = await prodRes.json();
+        const mainData = await productData.products;
+        if (mainData) {
+          setProductList(mainData);
+          setProdLoad(false);
+        }
+      }
+    };
+
+    loadData();
+  }, [pathname]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [cart, setCart] = useState<Product[]>([]); // Cart state
 
-  const decoded_name = decodeURIComponent(farmer_name);
+  const filteredProducts = productList.filter((product) => {
+    const isCategoryMatch =
+      selectedCategory === "All" || product.category === selectedCategory;
+    const isPriceMatch =
+      selectedPriceRange === "All" ||
+      (selectedPriceRange === "Under 100" && product.price < 100) ||
+      (selectedPriceRange === "100-200" &&
+        product.price >= 100 &&
+        product.price <= 200) ||
+      (selectedPriceRange === "Above 200" && product.price > 200);
+    const isSearchMatch =
+      product.prod_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-  // Filter the farmer data based on farmer name
-  useEffect(() => {
-    const filteredFarmer = farmerData.filter((uname) =>
-      uname.name.toLowerCase().includes(decoded_name.toLowerCase())
-    );
+    return isCategoryMatch && isPriceMatch && isSearchMatch;
+  });
 
-    if (filteredFarmer.length > 0) {
-      setSelectedFarmer(filteredFarmer[0]);
-    } else {
-      setSelectedFarmer(null); // No farmer found
-    }
-  }, [farmer_name, decoded_name]);
-
-  const filteredProducts = products.filter(
-    (product) => {
-      const isCategoryMatch =
-        selectedCategory === "All" || product.category === selectedCategory;
-      const isPriceMatch =
-        selectedPriceRange === "All" ||
-        (selectedPriceRange === "Under 100" && product.price < 100) ||
-        (selectedPriceRange === "100-200" &&
-          product.price >= 100 &&
-          product.price <= 200) ||
-        (selectedPriceRange === "Above 200" && product.price > 200);
-
-      const isSearchMatch =
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const isFarmers = product.farmer
-        .toLowerCase()
-        .includes(decoded_name.toLowerCase());
-
-      return isCategoryMatch && isPriceMatch && isSearchMatch && isFarmers;
-    },
-    [decoded_name]
-  );
-
-  // Add product to cart
-  const handleAddToCart = (product: Product) => {
-    setCart([...cart, product]);
-  };
-
-  // Buy all products in the cart (clears the cart)
-
-  // If no farmer is found, show a message
-  if (!selectedFarmer) {
-    return (
-      <div className="font-sans bg-gray-50">
-        <main className="py-10">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center text-xl font-semibold text-gray-600">
-              Farmer not found
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
 
   return (
     <div className="font-sans bg-gray-50">
       <main className="py-10">
         <div className="container mx-auto px-4 md:px-6">
-          {/* Farmer Details */}
-          <div className="bg-white rounded-xl overflow-hidden shadow-md p-6 mb-8">
-            <div className="flex items-center mb-6">
-              <Image
-                src={selectedFarmer.image || image}
-                alt={selectedFarmer.name}
-                width={96} // 24 * 4 = 96px
-                height={96}
-                className="rounded-full mr-6"
-                style={{ objectFit: "cover" }}
-              />
-              <div>
-                <h2 className="font-bold text-2xl">{selectedFarmer.name}</h2>
-                <div className="flex items-center text-yellow-500 mb-2">
-                  {[...Array(Math.floor(selectedFarmer.rating))].map(
-                    (_, index) => (
-                      <FaStar key={index} />
-                    )
-                  )}
-                  {selectedFarmer.rating % 1 > 0 && (
-                    <FaStar className="text-gray-400" />
-                  )}
-                  <span className="ml-2 text-gray-600">
-                    Rating: {selectedFarmer.rating}
-                  </span>
+          {selectedFarmers.length === 0 ? (
+            <div className="text-center text-xl font-semibold text-gray-600">
+              Farmer not found
+            </div>
+          ) : (
+            <div>
+              {famerload ? (
+                <div>
+                  <FarmerDetailListSkeleton />
                 </div>
-              </div>
+              ) : (
+                selectedFarmers.map((selectedFarmer) => (
+                  <div
+                    key={selectedFarmer.id}
+                    className="bg-white rounded-xl overflow-hidden shadow-md p-6 mb-8"
+                  >
+                    <div className="flex items-center mb-6 ">
+                      <div className="relative w-[70px] h-[70px] mr-2 rounded-full ">
+                        <Image
+                          src={selectedFarmer.profilePhoto || image}
+                          alt={selectedFarmer.name}
+                          fill
+                          priority
+                          sizes="800px"
+                        />
+                      </div>
+                      <div>
+                        <h2 className="font-bold text-2xl">
+                          {selectedFarmer.name}
+                        </h2>
+                        <div className="flex items-center text-yellow-500 mb-2">
+                          {[...Array(Math.floor(selectedFarmer.rating))].map(
+                            (_, index) => (
+                              <FaStar key={index} />
+                            )
+                          )}
+                          {selectedFarmer.rating % 1 > 0 && (
+                            <FaStar className="text-gray-400" />
+                          )}
+                          <span className="ml-2 text-gray-600">
+                            Rating: {selectedFarmer.rating}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <h3 className="font-bold text-lg text-gray-700">
+                        Address
+                      </h3>
+                      <p className="text-gray-600 text-sm">
+                        {selectedFarmer.taluka}, {selectedFarmer.district},{" "}
+                        {selectedFarmer.city}, {selectedFarmer.state}
+                      </p>
+                    </div>
+
+                    <div className="mb-4">
+                      <h3 className="font-bold text-lg text-gray-700">
+                        Farming Details
+                      </h3>
+                      <p className="text-gray-600 text-sm">
+                        Main Crop: {selectedFarmer.mainCrops}
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        Farm Type : {selectedFarmer.farmType}
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        Farmer Rating: {selectedFarmer.rating}
+                      </p>
+                    </div>
+
+                    <Link
+                      href={`/${selectedFarmer.id}`}
+                      className="w-full px-5 bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200"
+                    >
+                      Contact Farmer
+                    </Link>
+                  </div>
+                ))
+              )}
             </div>
+          )}
 
-            {/* Address and Farming Details */}
-            <div className="mb-4">
-              <h3 className="font-bold text-lg text-gray-700">Address</h3>
-              <p className="text-gray-600 text-sm">
-                {selectedFarmer.address.taluka},{" "}
-                {selectedFarmer.address.district}, {selectedFarmer.address.city}
-                , {selectedFarmer.address.state}
-              </p>
-            </div>
-
-            <div className="mb-4">
-              <h3 className="font-bold text-lg text-gray-700">
-                Farming Details
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Main Crop: {selectedFarmer.mainCrop}
-              </p>
-              <p className="text-gray-600 text-sm">
-                Farm Type : {selectedFarmer.farmType}
-              </p>
-              <p className="text-gray-600 text-sm">
-                Farmer Rating: {selectedFarmer.rating}
-              </p>
-            </div>
-
-            <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200">
-              Contact Farmer
-            </button>
-          </div>
-
-          {/* Search and Filter Section */}
+          {/* Search & Filter UI */}
           <div className="flex justify-between items-center mb-8">
             <div className="relative w-full md:w-1/3">
               <input
@@ -229,53 +249,58 @@ const Farmer_Detail = ({ farmer_name }: { farmer_name: string }) => {
             </div>
           </div>
 
-          {/* Product Listing */}
+          {/* Product List */}
           {filteredProducts.length === 0 ? (
             <div className="text-center text-xl font-semibold text-gray-600">
               No Products Found
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
-                >
-                  <div className="relative">
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      width={400}
-                      height={192} // roughly matches h-48 (12rem = 192px)
-                      className="object-cover w-full"
-                      priority
-                    />
-                    <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">
-                      Best Seller
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-bold text-lg">{product.name}</h3>
-                      <span className="text-green-600 font-bold">
-                        ₹{product.price}/kg
-                      </span>
-                    </div>
-                    <p className="text-gray-600 text-sm mb-3">
-                      {product.description}
-                    </p>
-                    <div className="flex items-center gap-4">
-                      {/* Add to Cart Button */}
-                      <button
-                        onClick={() => handleAddToCart(product)}
-                        className="p-2 px-4 bg-blue-600 text-white rounded-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
+            <div>
+              {prodload ? (
+                <div>
+                  <ProductDetailSkeleton />
                 </div>
-              ))}
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {filteredProducts.map((product) => (
+                    <div
+                      key={product.id}
+                      className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
+                    >
+                      <div className="relative  w-[400px] h-[192px]">
+                        <Image
+                          src={product.imageUrl || image}
+                          alt={product.prod_name}
+                          fill
+                          className="object-cover p-3"
+                          priority
+                        />
+                      </div>
+                      <div className="p-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <h3 className="font-bold text-lg">
+                            {product.prod_name}
+                          </h3>
+                          <span className="text-green-600 font-bold">
+                            ₹{product.price}/kg
+                          </span>
+                        </div>
+                        <div className="flex items-center mb-3">
+                          <span className="text-sm text-gray-700">
+                            Category : {product.category}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 text-sm mb-3">
+                          {product.description}
+                        </p>
+                        <button className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200">
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
