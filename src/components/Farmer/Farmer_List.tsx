@@ -50,8 +50,7 @@ const Farmer_List = () => {
     const isStateMatch =
       selectedState === "All" || farmer.state === selectedState;
     const isSearchMatch =
-      farmer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      farmer.mainCrop.toLowerCase().includes(searchQuery.toLowerCase());
+      farmer.name.toLowerCase().includes(searchQuery.toLowerCase()) 
     return isStateMatch && isSearchMatch;
   });
 
@@ -62,7 +61,7 @@ const Farmer_List = () => {
           {/* Search and Filter Section */}
           <div className="flex justify-between items-center mb-8">
             {/* Search Bar */}
-            <div className="relative w-full md:w-1/3">
+            <div className="relative w-max md:w-1/3">
               <input
                 type="text"
                 placeholder="Search Farmers"
@@ -71,7 +70,7 @@ const Farmer_List = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <FaSearch
-                className="absolute top-3 right-3 text-gray-500"
+                className="absolute top-4 right-3 text-gray-500"
                 size={20}
               />
             </div>
@@ -83,7 +82,7 @@ const Farmer_List = () => {
                 className="bg-green-600 text-white py-2 px-4 rounded-md flex items-center space-x-2"
               >
                 <IoIosFunnel size={20} />
-                <span>Filters</span>
+                <span className="hidden md:block">Filters</span>
               </button>
 
               {/* Filter Dropdown */}

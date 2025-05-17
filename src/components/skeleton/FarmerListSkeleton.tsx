@@ -1,20 +1,26 @@
+// components/FarmerListSkeleton.jsx
+import React from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const FarmerCardSkeleton = () => (
-  <div className="bg-white rounded-xl overflow-hidden shadow-md animate-pulse">
-    <div className="relative w-full h-48 bg-gray-300" />
+  <div className="bg-white rounded-xl overflow-hidden shadow-md">
+    <div className="relative w-full h-48">
+      <Skeleton height="100%" />
+    </div>
     <div className="p-4 space-y-3">
       <div className="flex justify-between items-center mb-2">
-        <div className="h-6 w-40 bg-gray-300 rounded" />
-        <div className="h-6 w-12 bg-yellow-300 rounded" />
+        <Skeleton width={160} height={24} />
+        <Skeleton width={48} height={24} />
       </div>
-      <div className="h-4 w-32 bg-gray-300 rounded" />
-      <div className="flex space-x-1 text-gray-600 text-sm mb-5">
-        <div className="h-4 w-10 bg-gray-300 rounded" />
-        <div className="h-4 w-10 bg-gray-300 rounded" />
-        <div className="h-4 w-10 bg-gray-300 rounded" />
-        <div className="h-4 w-10 bg-gray-300 rounded" />
+      <Skeleton width={128} height={16} />
+      <div className="flex space-x-2 text-sm mb-5">
+        <Skeleton width={40} height={16} />
+        <Skeleton width={40} height={16} />
+        <Skeleton width={40} height={16} />
+        <Skeleton width={40} height={16} />
       </div>
-      <div className="h-10 bg-green-600 rounded animate-pulse" />
+      <Skeleton height={40} borderRadius={8} />
     </div>
   </div>
 );

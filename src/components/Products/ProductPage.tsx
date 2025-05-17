@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoIosFunnel } from "react-icons/io";
 import lims from "@/../public/images/image.png";
-import bgims from "@/../public/images/photo-1464226184884-fa280b87c399.png";
+import bgims from "@/../public/images/dan-meyers-0AgtPoAARtE-unsplash.jpg";
 import Image from "next/image";
+import FarmerListSkeleton from "../skeleton/FarmerListSkeleton";
 
 const ProductPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,6 +13,7 @@ const ProductPage = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
+  const [loading, setloading] = useState(true);
   const [products, setProducts] = useState([
     {
       name: "",
@@ -35,7 +37,7 @@ const ProductPage = () => {
         const data = await res.json();
         const prodData = await data.products;
         setProducts(prodData);
-
+        setloading(false);
       }
     };
     getDocs();
@@ -65,7 +67,7 @@ const ProductPage = () => {
         <div className="container mx-auto px-4 md:px-6">
           {/* Search and Filter Section */}
           <div className="flex justify-between items-center mb-8">
-            <div className="relative w-full md:w-1/3">
+            <div className="relative w-max md:w-1/3">
               <input
                 type="text"
                 placeholder="Search Products"
@@ -74,7 +76,7 @@ const ProductPage = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <FaSearch
-                className="absolute top-3 right-3 text-gray-500"
+                className="absolute top-4 right-3 text-gray-500"
                 size={20}
               />
             </div>
@@ -85,7 +87,7 @@ const ProductPage = () => {
                 className="bg-green-600 text-white py-2 px-4 rounded-md flex items-center space-x-2"
               >
                 <IoIosFunnel size={20} />
-                <span>Filters</span>
+                <span className="hidden md:block">Filters</span>
               </button>
 
               {isFilterOpen && (
@@ -129,51 +131,61 @@ const ProductPage = () => {
               No Products Found
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
-                >
-                  <div className="relative">
-                    <Image
-                      src={product.imageUrl || bgims}
-                      alt={product.prod_name}
-                      width={500} // or any estimated width
-                      height={192} // height equivalent to h-48 (48 × 4 = 192px)
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-bold text-lg">{product.prod_name}</h3>
-                      <span className="text-green-600 font-bold">
-                        ₹{product.price}/kg
-                      </span>
-                    </div>
-                    <p className="text-gray-600 text-sm mb-3">
-                      {product.description}
-                    </p>
-                    <div className="flex items-center mb-3">
-                      <div className="relative w-8 h-8 mr-2">
+            <div>
+              {loading ? (
+                <>
+                  <FarmerListSkeleton />
+                </>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {filteredProducts.map((product) => (
+                    <div
+                      key={product.id}
+                      className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
+                    >
+                      <div className="relative">
                         <Image
-                          src={product.profilePhoto || lims}
-                          alt="Farmer"
-                          fill
-                          sizes="200px"
-                          className="rounded-full object-cover"
+                          src={product.imageUrl || bgims}
+                          alt={product.prod_name}
+                          width={500} // or any estimated width
+                          height={192} // height equivalent to h-48 (48 × 4 = 192px)
+                          className="object-cover"
                         />
                       </div>
-                      <span className="text-sm text-gray-700">
-                        {product.name}
-                      </span>
+                      <div className="p-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <h3 className="font-bold text-lg">
+                            {product.prod_name}
+                          </h3>
+                          <span className="text-green-600 font-bold">
+                            ₹{product.price}/kg
+                          </span>
+                        </div>
+                        <p className="text-gray-600 text-sm mb-3">
+                          {product.description}
+                        </p>
+                        <div className="flex items-center mb-3">
+                          <div className="relative w-8 h-8 mr-2">
+                            <Image
+                              src={product.profilePhoto || lims}
+                              alt="Farmer"
+                              fill
+                              sizes="200px"
+                              className="rounded-full object-cover"
+                            />
+                          </div>
+                          <span className="text-sm text-gray-700">
+                            {product.name}
+                          </span>
+                        </div>
+                        <button className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200">
+                          Add to Cart
+                        </button>
+                      </div>
                     </div>
-                    <button className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200">
-                      Add to Cart
-                    </button>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>

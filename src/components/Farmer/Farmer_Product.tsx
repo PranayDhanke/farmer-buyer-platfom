@@ -39,6 +39,7 @@ const Farmer_Product = () => {
     const verifyAndLoad = async () => {
       if (!idToken) {
         setisUser(false);
+        router.push("/login/farmer-login")
         return;
       }
 
@@ -131,7 +132,7 @@ const Farmer_Product = () => {
         <main className="py-10">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex justify-between items-center mb-8">
-              <div className="relative w-full md:w-1/3">
+              <div className="relative w-max md:w-1/3">
                 <input
                   type="text"
                   placeholder="Search Products"
@@ -140,7 +141,7 @@ const Farmer_Product = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <FaSearch
-                  className="absolute top-3 right-3 text-gray-500"
+                  className="absolute top-4 right-3 text-gray-500"
                   size={20}
                 />
               </div>
@@ -150,7 +151,7 @@ const Farmer_Product = () => {
                   className="bg-green-600 text-white py-2 px-4 rounded-md flex items-center space-x-2"
                 >
                   <IoIosFunnel size={20} />
-                  <span>Filters</span>
+                  <span className="hidden md:block">Filters</span>
                 </button>
                 {isFilterOpen && (
                   <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2 w-48 right-0 z-10">

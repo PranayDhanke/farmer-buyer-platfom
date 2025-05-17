@@ -10,7 +10,7 @@ import {
   FaRegHandshake,
   FaArrowRight,
 } from "react-icons/fa"; // Importing specific icons from react-icons
-import images from "@/../public/images/photo-1464226184884-fa280b87c399.png"
+import images from "@/../public/images/dan-meyers-0AgtPoAARtE-unsplash.jpg"
 const Home = () => {
   return (
     <div>

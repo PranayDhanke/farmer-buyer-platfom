@@ -9,5 +9,4 @@
 ::-webkit-scrollbar {
     display: none; /* Hides the scrollbar in webkit browsers (Chrome, Safari) */
   }
-  
-@tailwind utilities;
+

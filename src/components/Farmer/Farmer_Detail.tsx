@@ -191,7 +191,7 @@ const Farmer_Detail = () => {
 
           {/* Search & Filter UI */}
           <div className="flex justify-between items-center mb-8">
-            <div className="relative w-full md:w-1/3">
+            <div className="relative w-max md:w-1/3">
               <input
                 type="text"
                 placeholder="Search Products"
@@ -200,18 +200,18 @@ const Farmer_Detail = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <FaSearch
-                className="absolute top-3 right-3 text-gray-500"
+                className="absolute top-4 right-3  text-gray-500"
                 size={20}
               />
             </div>
 
-            <div className="relative">
+            <div className="relative text-center">
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
                 className="bg-green-600 text-white py-2 px-4 rounded-md flex items-center space-x-2"
               >
                 <IoIosFunnel size={20} />
-                <span>Filters</span>
+                <span className="hidden md:block ">Filters</span>
               </button>
 
               {isFilterOpen && (
@@ -261,7 +261,7 @@ const Farmer_Detail = () => {
                   <ProductDetailSkeleton />
                 </div>
               ) : (
-                <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {filteredProducts.map((product) => (
                     <div
                       key={product.id}
