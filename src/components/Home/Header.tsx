@@ -1,9 +1,21 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Logo from "../../../public/images/image.png";
-import { FaBoxOpen, FaEnvelope, FaHome, FaInfoCircle, FaShoppingCart, FaSignInAlt, FaSignOutAlt, FaUserCheck, FaUserCircle, FaUsers } from "react-icons/fa";
+import {
+  FaBoxOpen,
+  FaEnvelope,
+  FaHome,
+  FaInfoCircle,
+  FaShoppingCart,
+  FaSignInAlt,
+  FaSignOutAlt,
+  FaUserCheck,
+  FaUserCircle,
+  FaUsers,
+} from "react-icons/fa";
 import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
 import Buyer_Cart from "../Buyer/Buyer_Cart";
 import Cookies from "js-cookie";
@@ -11,6 +23,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 import CryptoJS from "crypto-js";
 import { AnimatePresence, motion } from "framer-motion";
+
 
 const Header = () => {
   const router = useRouter();
@@ -39,7 +52,9 @@ const Header = () => {
           },
           body: JSON.stringify({ token: idToken }),
         });
+
         const data = await res.json();
+
         if (data.uid && encKey) {
           const encUID = CryptoJS.AES.encrypt(data.uid, encKey).toString();
           Cookies.set("Uid", encUID, { secure: true, sameSite: "strict" });
@@ -54,6 +69,7 @@ const Header = () => {
           toast.error("Token verification failed. Please login again.");
         }
       } else {
+        // fallback as buyer
         setIsLoggedIn(false);
         setUserType("");
       }
@@ -65,29 +81,25 @@ const Header = () => {
   return (
     <div>
       <ToastContainer />
-      <header className="bg-gradient-to-r from-green-600 to-green-800 text-white">
+      <header className="bg-gradient-to-r from-green-600 to-green-800 text-white shadow-md relative z-20">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           {/* Logo */}
-          <Link href="/">
-            <div className="flex items-center">
-              <Image src={Logo} alt="Logo" className="w-8 h-8 mr-2" />
-              <h1 className="text-xl font-bold">Argocart</h1>
-            </div>
+          <Link href="/" className="flex items-center space-x-2">
+            <Image src={Logo} alt="Logo" className="w-8 h-8" />
+            <h1 className="text-xl font-bold">Agrocart</h1>
           </Link>
 
-          {/* Hamburger Menu - Small screens */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-white text-2xl"
-              aria-label="Toggle Menu"
-            >
-              {isMobileMenuOpen ? <FiX /> : <FiMenu />}
-            </button>
-          </div>
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden text-white text-2xl"
+            aria-label="Toggle Menu"
+          >
+            {isMobileMenuOpen ? <FiX /> : <FiMenu />}
+          </button>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex space-x-6">
+          <nav className="hidden md:flex items-center space-x-6">
             <Link href="/">Home</Link>
             <Link href="/Products">Products</Link>
             <Link href="/farmers">Farmers</Link>
@@ -95,8 +107,8 @@ const Header = () => {
             <Link href="/contact-us">Contact</Link>
           </nav>
 
-          {/* Auth/Profile Options */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Auth Section */}
+          <div className="hidden md:flex items-center space-x-4 relative">
             {!isLoggedIn ? (
               <details className="relative">
                 <summary className="cursor-pointer flex items-center">
@@ -104,16 +116,18 @@ const Header = () => {
                   Login
                   <FiChevronDown className="ml-1 text-sm" />
                 </summary>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-700 z-10">
-                  <Link href="/login/farmer-login">
-                    <span className="block px-4 py-2 hover:bg-green-100">
-                      Farmer Login
-                    </span>
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800 z-30">
+                  <Link
+                    href="/login/farmer-login"
+                    className="block px-4 py-2 hover:bg-green-100"
+                  >
+                    Farmer Login
                   </Link>
-                  <Link href="/login/buyer-login">
-                    <span className="block px-4 py-2 hover:bg-green-100">
-                      Buyer Login
-                    </span>
+                  <Link
+                    href="/login/buyer-login"
+                    className="block px-4 py-2 hover:bg-green-100"
+                  >
+                    Buyer Login
                   </Link>
                 </div>
               </details>
@@ -124,50 +138,54 @@ const Header = () => {
                   Farmer Profile
                   <FiChevronDown className="ml-1 text-sm" />
                 </summary>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-700 z-10">
-                  <Link href="/Farmer-Panel/Profile">
-                    <span className="block px-4 py-2 hover:bg-green-100">
-                      Profile
-                    </span>
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800 z-30">
+                  <Link
+                    href="/Farmer-Panel/Profile"
+                    className="block px-4 py-2 hover:bg-green-100"
+                  >
+                    Profile
                   </Link>
-                  <Link href="/Farmer-Panel">
-                    <span className="block px-4 py-2 hover:bg-green-100">
-                      My Products
-                    </span>
+                  <Link
+                    href="/Farmer-Panel"
+                    className="block px-4 py-2 hover:bg-green-100"
+                  >
+                    My Products
                   </Link>
-                  <span
+                  <button
                     onClick={logoutuser}
-                    className="block px-4 py-2 hover:bg-green-100 cursor-pointer"
+                    className="w-full text-left px-4 py-2 hover:bg-green-100"
                   >
                     Logout
-                  </span>
+                  </button>
                 </div>
               </details>
-            ) : userType === "buyer" ? (
+            ) : (
               <details className="relative">
                 <summary className="cursor-pointer flex items-center">
                   <FaUserCircle className="mr-1" />
                   Buyer Profile
                   <FiChevronDown className="ml-1 text-sm" />
                 </summary>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-700 z-10">
-                  <Link href="/buyer/profile">
-                    <span className="block px-4 py-2 hover:bg-green-100">
-                      Profile
-                    </span>
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800 z-30">
+                  <Link
+                    href="/buyer/profile"
+                    className="block px-4 py-2 hover:bg-green-100"
+                  >
+                    Profile
                   </Link>
-                  <Link href="/buyer/my-products">
-                    <span className="block px-4 py-2 hover:bg-green-100">
-                      My Bought Products
-                    </span>
+                  <Link
+                    href="/buyer/my-products"
+                    className="block px-4 py-2 hover:bg-green-100"
+                  >
+                    My Bought Products
                   </Link>
                 </div>
               </details>
-            ) : null}
+            )}
           </div>
         </div>
 
-        {/* Mobile Menu Content */}
+        {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.nav
@@ -175,7 +193,7 @@ const Header = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden px-10 absolute text-white bg-green-500 z-10 h-fit mx-auto w-screen rounded-b-lg shadow-md"
+              className="md:hidden px-10 bg-green-700 text-white absolute w-full left-0 top-full rounded-b-lg z-10 shadow-lg"
             >
               <ul className="space-y-4 py-5">
                 <li className="flex items-center gap-2">
@@ -225,7 +243,7 @@ const Header = () => {
                       <button onClick={logoutuser}>Logout</button>
                     </li>
                   </>
-                ) : userType === "buyer" ? (
+                ) : (
                   <>
                     <li className="flex items-center gap-2">
                       <FaUserCheck />
@@ -236,7 +254,7 @@ const Header = () => {
                       <Link href="/buyer/my-products">My Bought Products</Link>
                     </li>
                   </>
-                ) : null}
+                )}
               </ul>
             </motion.nav>
           )}
@@ -244,7 +262,7 @@ const Header = () => {
       </header>
 
       {/* Buyer Cart */}
-      {userType === "buyer" && <Buyer_Cart />}
+      {userType === "buyer" ? <Buyer_Cart /> : ""}
     </div>
   );
 };

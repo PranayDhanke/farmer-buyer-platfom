@@ -32,6 +32,26 @@ const Farmer_Product = () => {
       imageUrl: "",
     },
   ]);
+  const deleteProduct = async (docId: string) => {
+    const response = window.confirm("Are you sure you Want to delete Product");
+
+    if (response) {
+      try {
+        const deleteRes = await fetch("/api/Farmer/Product/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uid: docId }),
+        });
+
+        if (deleteRes.ok) {
+          toast.success("Product Deleted Successfully");
+          router.push("/Farmer-Panel");
+        }
+      } catch {
+        toast.error("Error while Deleting the Product");
+      }
+    }
+  };
   useEffect(() => {
     const idToken = Cookies.get("firebase_token");
     const key = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
@@ -83,7 +103,7 @@ const Farmer_Product = () => {
     };
 
     verifyAndLoad();
-  }, []);
+  }, [router]);
 
   const filteredProducts = products.filter((product) => {
     const name = product?.prod_name || "";
@@ -105,26 +125,6 @@ const Farmer_Product = () => {
     return isCategoryMatch && isPriceMatch && isSearchMatch;
   });
 
-  const deleteProduct = async (docId: string) => {
-    const response = window.confirm("Are you sure you Want to delete Product");
-
-    if (response) {
-      try {
-        const deleteRes = await fetch("/api/Farmer/Product/delete", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ uid: docId }),
-        });
-
-        if (deleteRes.ok) {
-          toast.success("Product Deleted Successfully");
-          router.push("/Farmer-Panel");
-        }
-      } catch {
-        toast.error("Error while Deleting the Product");
-      }
-    }
-  };
 
   return (
     <div className="font-sans bg-gray-50">

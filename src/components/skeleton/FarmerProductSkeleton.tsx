@@ -17,7 +17,7 @@ const FarmerProductSkeleton = ({ count = 6 }: { count?: number }) => {
             <Skeleton width="70%" height={20} />
             <Skeleton width="50%" height={20} />
             <Skeleton count={2} height={12} />
-            <div className="flex gap-4 mt-4">
+            <div className="flex gap-4 mt-4 mx-auto items-center">
               <Skeleton width={80} height={36} />
               <Skeleton width={80} height={36} />
             </div>

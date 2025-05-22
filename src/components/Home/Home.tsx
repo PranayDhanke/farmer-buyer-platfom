@@ -45,7 +45,7 @@ const Home = () => {
                     </Link>
                   </div>
                 </div>
-                <div className="md:w-1/2 relative">
+                <div className="md:w-1/2 relative ">
                   <Image
                     src={images}
                     alt="Farmers with fresh produce"

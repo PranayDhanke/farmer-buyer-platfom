@@ -1,7 +1,7 @@
 // components/FarmerListSkeleton.jsx
-import React from 'react';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import React from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const FarmerCardSkeleton = () => (
   <div className="bg-white rounded-xl overflow-hidden shadow-md">
@@ -20,7 +20,10 @@ const FarmerCardSkeleton = () => (
         <Skeleton width={40} height={16} />
         <Skeleton width={40} height={16} />
       </div>
-      <Skeleton height={40} borderRadius={8} />
+      <div className="flex gap-3">
+        <Skeleton height={40} width={120} borderRadius={8} />
+        <Skeleton height={40} width={120} borderRadius={8} />
+      </div>
     </div>
   </div>
 );
