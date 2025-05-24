@@ -24,7 +24,6 @@ import { useRouter } from "next/navigation";
 import CryptoJS from "crypto-js";
 import { AnimatePresence, motion } from "framer-motion";
 
-
 const Header = () => {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -76,6 +75,7 @@ const Header = () => {
     };
 
     verifyUser();
+
   }, []);
 
   return (

@@ -71,7 +71,7 @@ const Buyer_Cart = () => {
                     </div>
 
                     {/* Quantity Control */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-4">
                       <button
                         onClick={() => updateQuantity(item.id, "decrease")}
                         className="bg-gray-300 px-2 py-1 rounded hover:bg-gray-400"

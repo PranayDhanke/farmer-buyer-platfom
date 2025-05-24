@@ -9,9 +9,13 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import ProductDetailSkeleton from "../skeleton/ProductDetailSkeleton";
 import FarmerDetailListSkeleton from "../skeleton/FarmerDetailListSkeleton";
+import { useCart } from "../extra/CartContext";
 
 const Farmer_Detail = () => {
   const pathname = usePathname();
+
+  const { addToCart } = useCart();
+
   const [selectedFarmers, setSelectedFarmers] = useState([
     {
       id: "",
@@ -35,7 +39,6 @@ const Farmer_Detail = () => {
       price: 0,
       imageUrl: "",
       category: "",
-      rating: 0,
     },
   ]);
 
@@ -79,6 +82,22 @@ const Farmer_Detail = () => {
     loadData();
   }, [pathname]);
 
+  const addItemCart = (
+    id: string,
+    name: string,
+    price: number,
+    quantity: number,
+    image: string
+  ) => {
+    addToCart({
+      id,
+      name,
+      price,
+      quantity,
+      image,
+    });
+  };
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState("All");
@@ -100,7 +119,6 @@ const Farmer_Detail = () => {
 
     return isCategoryMatch && isPriceMatch && isSearchMatch;
   });
-
 
   return (
     <div className="font-sans bg-gray-50">
@@ -293,7 +311,18 @@ const Farmer_Detail = () => {
                         <p className="text-gray-600 text-sm mb-3">
                           {product.description}
                         </p>
-                        <button className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200">
+                        <button
+                          onClick={() => {
+                            addItemCart(
+                              product.id,
+                              product.prod_name,
+                              product.price,
+                              1,
+                              product.imageUrl
+                            );
+                          }}
+                          className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200"
+                        >
                           Add to Cart
                         </button>
                       </div>

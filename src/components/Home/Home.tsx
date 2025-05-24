@@ -11,7 +11,11 @@ import {
   FaArrowRight,
 } from "react-icons/fa"; // Importing specific icons from react-icons
 import images from "@/../public/images/dan-meyers-0AgtPoAARtE-unsplash.jpg"
+import { SiTrueup } from "react-icons/si";
+import MarketPrices from "../extra/MarketPrices";
 const Home = () => {
+
+  
   return (
     <div>
       <div className="w-full font-sans bg-white">
@@ -49,6 +53,7 @@ const Home = () => {
                   <Image
                     src={images}
                     alt="Farmers with fresh produce"
+                    priority
                     width={600} // Width from URL (or choose based on layout)
                     height={400} // You can adjust to match aspect ratio
                     className="rounded-lg shadow-xl w-full transform transition-transform duration-500 hover:scale-[1.02]"
@@ -126,9 +131,13 @@ const Home = () => {
             </div>
           </section>
 
+          <section>
+            <MarketPrices />
+          </section>
+
           {/* Featured Products Section */}
-          <section className="py-12 md:py-16   bg-green-50">
-            <div className="">
+          <section className="py-12 md:py-16 bg-green-50">
+            <div>
               <List_Product />
             </div>
             <div className="text-center mt-10">
@@ -144,7 +153,7 @@ const Home = () => {
             </div>
           </section>
         </main>
-      </div>
+      </div>-
     </div>
   );
 };
