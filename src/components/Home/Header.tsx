@@ -22,13 +22,13 @@ import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 import CryptoJS from "crypto-js";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState("");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const logoutuser = () => {
     Cookies.remove("firebase_token");
@@ -36,6 +36,7 @@ const Header = () => {
     Cookies.remove("userSession");
     toast.success("Logged Out");
     router.push("/login/farmer-login");
+    setIsSidebarOpen(false);
   };
 
   useEffect(() => {
@@ -51,9 +52,7 @@ const Header = () => {
           },
           body: JSON.stringify({ token: idToken }),
         });
-
         const data = await res.json();
-
         if (data.uid && encKey) {
           const encUID = CryptoJS.AES.encrypt(data.uid, encKey).toString();
           Cookies.set("Uid", encUID, { secure: true, sameSite: "strict" });
@@ -68,201 +67,149 @@ const Header = () => {
           toast.error("Token verification failed. Please login again.");
         }
       } else {
-        // fallback as buyer
         setIsLoggedIn(false);
         setUserType("");
       }
     };
 
     verifyUser();
-
   }, []);
+
+  const menuItems = [
+    { href: "/", icon: <FaHome />, label: "Home" },
+    { href: "/Products", icon: <FaBoxOpen />, label: "Products" },
+    { href: "/farmers", icon: <FaUsers />, label: "Farmers" },
+    { href: "/market-price", icon: <FaInfoCircle />, label: "Market Prices" },
+    { href: "/about-us", icon: <FaInfoCircle />, label: "About" },
+    { href: "/contact-us", icon: <FaEnvelope />, label: "Contact" },
+  ];
+
+  const authLinks = !isLoggedIn
+    ? [
+        {
+          href: "/login/farmer-login",
+          icon: <FaSignInAlt />,
+          label: "Farmer Login",
+        },
+        {
+          href: "/login/buyer-login",
+          icon: <FaSignInAlt />,
+          label: "Buyer Login",
+        },
+      ]
+    : userType === "farmer"
+    ? [
+        {
+          href: "/Farmer-Panel/Profile",
+          icon: <FaUserCircle />,
+          label: "Profile",
+        },
+        { href: "/Farmer-Panel", icon: <FaBoxOpen />, label: "My Products" },
+        { icon: <FaSignOutAlt />, label: "Logout", action: logoutuser },
+      ]
+    : [
+        { href: "/buyer/profile", icon: <FaUserCheck />, label: "Profile" },
+        {
+          href: "/buyer/my-products",
+          icon: <FaShoppingCart />,
+          label: "My Bought Products",
+        },
+      ];
 
   return (
     <div>
       <ToastContainer />
-      <header className="bg-gradient-to-r from-green-600 to-green-800 text-white shadow-md relative z-20">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+      <header className="bg-gradient-to-r from-green-600 to-green-800 text-white shadow-md z-30">
+        <div className="flex items-center justify-between px-4 py-4 container mx-auto">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Image src={Logo} alt="Logo" className="w-8 h-8" />
             <h1 className="text-xl font-bold">Agrocart</h1>
           </Link>
 
-          {/* Mobile Menu Toggle */}
+          {/* Sidebar Toggle */}
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-white text-2xl"
-            aria-label="Toggle Menu"
+            onClick={() => setIsSidebarOpen(true)}
+            className="text-white text-2xl"
+            aria-label="Open Menu"
           >
-            {isMobileMenuOpen ? <FiX /> : <FiMenu />}
+            <FiMenu />
           </button>
-
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/">Home</Link>
-            <Link href="/Products">Products</Link>
-            <Link href="/farmers">Farmers</Link>
-            <Link href="/about-us">About</Link>
-            <Link href="/contact-us">Contact</Link>
-          </nav>
-
-          {/* Auth Section */}
-          <div className="hidden md:flex items-center space-x-4 relative">
-            {!isLoggedIn ? (
-              <details className="relative">
-                <summary className="cursor-pointer flex items-center">
-                  <FaUserCircle className="mr-1" />
-                  Login
-                  <FiChevronDown className="ml-1 text-sm" />
-                </summary>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800 z-30">
-                  <Link
-                    href="/login/farmer-login"
-                    className="block px-4 py-2 hover:bg-green-100"
-                  >
-                    Farmer Login
-                  </Link>
-                  <Link
-                    href="/login/buyer-login"
-                    className="block px-4 py-2 hover:bg-green-100"
-                  >
-                    Buyer Login
-                  </Link>
-                </div>
-              </details>
-            ) : userType === "farmer" ? (
-              <details className="relative">
-                <summary className="cursor-pointer flex items-center">
-                  <FaUserCircle className="mr-1" />
-                  Farmer Profile
-                  <FiChevronDown className="ml-1 text-sm" />
-                </summary>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800 z-30">
-                  <Link
-                    href="/Farmer-Panel/Profile"
-                    className="block px-4 py-2 hover:bg-green-100"
-                  >
-                    Profile
-                  </Link>
-                  <Link
-                    href="/Farmer-Panel"
-                    className="block px-4 py-2 hover:bg-green-100"
-                  >
-                    My Products
-                  </Link>
-                  <button
-                    onClick={logoutuser}
-                    className="w-full text-left px-4 py-2 hover:bg-green-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </details>
-            ) : (
-              <details className="relative">
-                <summary className="cursor-pointer flex items-center">
-                  <FaUserCircle className="mr-1" />
-                  Buyer Profile
-                  <FiChevronDown className="ml-1 text-sm" />
-                </summary>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800 z-30">
-                  <Link
-                    href="/buyer/profile"
-                    className="block px-4 py-2 hover:bg-green-100"
-                  >
-                    Profile
-                  </Link>
-                  <Link
-                    href="/buyer/my-products"
-                    className="block px-4 py-2 hover:bg-green-100"
-                  >
-                    My Bought Products
-                  </Link>
-                </div>
-              </details>
-            )}
-          </div>
         </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.nav
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden px-10 bg-green-700 text-white absolute w-full left-0 top-full rounded-b-lg z-10 shadow-lg"
-            >
-              <ul className="space-y-4 py-5">
-                <li className="flex items-center gap-2">
-                  <FaHome />
-                  <Link href="/">Home</Link>
-                </li>
-                <li className="flex items-center gap-2">
-                  <FaBoxOpen />
-                  <Link href="/Products">Products</Link>
-                </li>
-                <li className="flex items-center gap-2">
-                  <FaUsers />
-                  <Link href="/farmers">Farmers</Link>
-                </li>
-                <li className="flex items-center gap-2">
-                  <FaInfoCircle />
-                  <Link href="/about-us">About</Link>
-                </li>
-                <li className="flex items-center gap-2">
-                  <FaEnvelope />
-                  <Link href="/contact-us">Contact</Link>
-                </li>
-
-                {!isLoggedIn ? (
-                  <>
-                    <li className="flex items-center gap-2">
-                      <FaSignInAlt />
-                      <Link href="/login/farmer-login">Farmer Login</Link>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <FaSignInAlt />
-                      <Link href="/login/buyer-login">Buyer Login</Link>
-                    </li>
-                  </>
-                ) : userType === "farmer" ? (
-                  <>
-                    <li className="flex items-center gap-2">
-                      <FaUserCircle />
-                      <Link href="/Farmer-Panel/Profile">Profile</Link>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <FaBoxOpen />
-                      <Link href="/Farmer-Panel">My Products</Link>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <FaSignOutAlt />
-                      <button onClick={logoutuser}>Logout</button>
-                    </li>
-                  </>
-                ) : (
-                  <>
-                    <li className="flex items-center gap-2">
-                      <FaUserCheck />
-                      <Link href="/buyer/profile">Profile</Link>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <FaShoppingCart />
-                      <Link href="/buyer/my-products">My Bought Products</Link>
-                    </li>
-                  </>
-                )}
-              </ul>
-            </motion.nav>
-          )}
-        </AnimatePresence>
       </header>
 
+      {/* Sidebar */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.aside
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-0 left-0 h-full w-2xs bg-white text-gray-800 z-40 shadow-xl"
+          >
+            <div className="flex items-center justify-between px-4 py-4 border-b">
+              <h2 className="text-xl font-semibold">Menu</h2>
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="text-2xl text-gray-600"
+              >
+                <FiX />
+              </button>
+            </div>
+
+            <nav className="p-4 space-y-4">
+              {menuItems.map(({ href, icon, label }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="flex items-center gap-2 px-2 py-2 hover:bg-green-100 rounded"
+                >
+                  {icon}
+                  {label}
+                </Link>
+              ))}
+
+              <hr className="my-2" />
+
+              {authLinks.map(({ href, icon, label, action }) =>
+                action ? (
+                  <button
+                    key={label}
+                    onClick={action}
+                    className="w-full text-left flex items-center gap-2 px-2 py-2 hover:bg-green-100 rounded"
+                  >
+                    {icon}
+                    {label}
+                  </button>
+                ) : (
+                  <Link
+                    key={label}
+                    href={href}
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="flex items-center gap-2 px-2 py-2 hover:bg-green-100 rounded"
+                  >
+                    {icon}
+                    {label}
+                  </Link>
+                )
+              )}
+            </nav>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
+      {/* Overlay */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 z-30"
+        />
+      )}
+
       {/* Buyer Cart */}
-      {userType === "buyer" ? <Buyer_Cart /> : ""}
+      {userType === "buyer" && <Buyer_Cart />}
     </div>
   );
 };

@@ -1,10 +1,8 @@
-// app/components/MarketPrices.tsx (or src/components/MarketPrices.tsx)
 "use client";
 import { useEffect, useState } from "react";
 import { FaLeaf, FaRupeeSign } from "react-icons/fa";
+import { motion } from "framer-motion";
 import RealPriceSkeleton from "../skeleton/RealPriceSkeleton";
-
-// Simulated server-side API call (replace with fetch to real API)
 
 export default function MarketPrices() {
   const [loading, setLoading] = useState(true);
@@ -16,7 +14,7 @@ export default function MarketPrices() {
     const key = process.env.NEXT_PUBLIC_FARMER_API_KEY;
     const fetDate = async () => {
       const res = await fetch(
-        `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${key}&format=json&filters%5Bstate.keyword%5D=Maharashtra&filters%5Bdistrict%5D=Wardha`,
+        `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${key}&format=json&limit=8&filters%5Bstate.keyword%5D=Maharashtra`,
         {
           method: "GET",
         }
@@ -24,16 +22,13 @@ export default function MarketPrices() {
 
       if (res.ok) {
         const data = await res.json();
-
         const dataRecords = data.records;
-
         setPrices(dataRecords);
-
-        setLoading(false)
+        setLoading(false);
       }
     };
     fetDate();
-  });
+  }, []);
 
   return (
     <section className="py-12 bg-white">
@@ -50,11 +45,14 @@ export default function MarketPrices() {
         {loading ? (
           <RealPriceSkeleton />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {prices.map((item, index) => (
-              <div
+              <motion.div
                 key={index}
                 className="bg-green-50 p-5 rounded-lg shadow-sm hover:shadow-md transition-all"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
               >
                 <div className="flex items-center mb-3">
                   <FaLeaf className="text-green-600 text-xl mr-2" />
@@ -67,9 +65,9 @@ export default function MarketPrices() {
                   <p className="text-lg font-medium">{item.modal_price}</p>
                 </div>
                 <p className="text-sm text-gray-500">
-                  Location: {item.district} , {item.state}
+                  Location: {item.district}, {item.state}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}

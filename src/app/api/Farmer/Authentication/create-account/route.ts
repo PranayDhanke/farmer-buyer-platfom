@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
+    const uid = formData.get("uid") as string;
     const name = formData.get("name") as string;
     const email = formData.get("email") as string | null;
     const password = formData.get("password") as string | null;
@@ -35,43 +36,35 @@ export async function POST(req: NextRequest) {
     }
 
     // Step 1: Create Firebase Auth user
-    const userCredential = await createUserWithEmailAndPassword(
-      fireAuth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-
-    const idToken = await userCredential.user.getIdToken();
 
     // Step 2: Upload profile photo to Supabase Storage
     const { error: profileUploadError } = await supabase.storage
       .from("farmer")
-      .upload(`${user.uid}/profile.jpg`, profilePhoto);
+      .upload(`${uid}/profile.jpg`, profilePhoto);
 
     if (profileUploadError) throw profileUploadError;
 
     // Get the public URL for the profile photo
     const { data: profileData } = supabase.storage
       .from("farmer")
-      .getPublicUrl(`${user.uid}/profile.jpg`);
+      .getPublicUrl(`${uid}/profile.jpg`);
     const profilePhotoUrl = profileData.publicUrl;
 
     // Step 3: Upload aadhar photo to Supabase Storage
     const { error: aadharUploadError } = await supabase.storage
       .from("farmer")
-      .upload(`${user.uid}/aadhar.jpg`, aadharPhoto);
+      .upload(`${uid}/aadhar.jpg`, aadharPhoto);
 
     if (aadharUploadError) throw aadharUploadError;
 
     // Get the public URL for the aadhar photo
     const { data: aadharData } = supabase.storage
       .from("farmer")
-      .getPublicUrl(`${user.uid}/aadhar.jpg`);
+      .getPublicUrl(`${uid}/aadhar.jpg`);
     const aadharPhotoUrl = aadharData.publicUrl;
 
     // Step 4: Save user data to Firestore
-    const userRef = doc(fireFireStore, "farmers", user.uid);
+    const userRef = doc(fireFireStore, "farmers", uid);
     await setDoc(userRef, {
       name,
       email,
@@ -84,11 +77,11 @@ export async function POST(req: NextRequest) {
       city,
       profilePhoto: profilePhotoUrl,
       aadharPhoto: aadharPhotoUrl,
-      state:"Maharashtra",
-      rating:"0"
+      state: "Maharashtra",
+      rating: "0",
     });
 
-    return NextResponse.json({ idToken, authenticated: true });
+    return NextResponse.json({ Message: "success", authenticated: true });
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json({
