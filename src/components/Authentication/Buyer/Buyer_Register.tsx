@@ -1,61 +1,125 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import mahaAdd from "@/../public/data/mahaAddress.json"; // adjust path as per your project
+import { supabase } from "@/app/lib/superbase/supabaseClient";
+import { toast, ToastContainer } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const Buyer_Register = () => {
+
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    phone: "",
     profilePhoto: null,
-    location: "",
     district: "",
+    phone:"",
     taluka: "",
     city: "",
     aadhar: "",
-    aadharPhoto: null, // Added aadhar photo field
+    aadharPhoto: null,
   });
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [districts, setDistricts] = useState<string[]>([]);
+  const [talukas, setTalukas] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
 
-  // Address data for district, taluka, and city (can be dynamically populated)
-  const districts = ["District 1", "District 2", "District 3"];
-  const talukas = ["Taluka 1", "Taluka 2", "Taluka 3"];
-  const cities = ["City 1", "City 2", "City 3"];
+  useEffect(() => {
+    const data = mahaAdd;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const districtNames = data.Maharashtra.districts.map(
+      (district) => district.districtNameEnglish
+    );
+
+    setDistricts(districtNames);
+  }, []);
+
+  useEffect(() => {
+    const mahaData = mahaAdd;
+    const selectedDistrict = mahaData.Maharashtra.districts.find(
+      (district) => district.districtNameEnglish === formData.district
+    );
+
+    if (selectedDistrict) {
+      const talukaNames = Object.keys(selectedDistrict.talukas);
+      setTalukas(talukaNames);
+
+      const selectedCities =
+        selectedDistrict.talukas[
+          formData.taluka as keyof typeof selectedDistrict.talukas
+        ] || [];
+      setCities(selectedCities);
+    }
+  }, [formData.district, formData.taluka]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setFormData({
-      ...formData,
-      [e.target.name]: file,
-    });
+    setFormData((prev) => ({ ...prev, [e.target.name]: file }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission logic
-    console.log(formData);
+
+    try {
+      const { data } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+      });
+      const formDataToSend = new FormData();
+
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("email", formData.email);
+            formDataToSend.append("phone", formData.phone);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("aadhar", formData.aadhar);
+      formDataToSend.append("district", formData.district);
+      formDataToSend.append("taluka", formData.taluka);
+      formDataToSend.append("city", formData.city);
+
+      // Append files if they exist
+      if (formData.profilePhoto) {
+        formDataToSend.append("profilePhoto", formData.profilePhoto);
+      }
+      if (formData.aadharPhoto) {
+        formDataToSend.append("aadharPhoto", formData.aadharPhoto);
+      }
+
+      const uid = data.user?.id;
+
+      if (uid) formDataToSend.append("uid" , uid);
+
+      toast.loading("Wait Images are Uploading")
+      const res = await fetch("/api/Buyer/Authentication/create-account", {
+        method: "POST",
+        body: formDataToSend
+      });
+
+      if (res.ok) {
+        toast.success("Register Successfull")
+        router.push("/Buyer-Panel/Profile")
+      }
+    } catch {
+      toast.error("Error while Register");
+    }
   };
 
-  const nextStep = () => {
-    setCurrentStep(currentStep + 1);
-  };
-
-  const prevStep = () => {
-    setCurrentStep(currentStep - 1);
-  };
+  const nextStep = () => setCurrentStep(currentStep + 1);
+  const prevStep = () => setCurrentStep(currentStep - 1);
 
   return (
     <div id="buyer-register" className="font-sans bg-white">
+      <ToastContainer />
       <main>
         <section className="bg-gradient-to-b from-green-50 to-white py-12 md:py-20">
           <div className="container mx-auto px-4 md:px-6">
@@ -66,7 +130,8 @@ const Buyer_Register = () => {
                   <span className="text-green-600">Join Our Community</span>
                 </h2>
                 <p className="text-lg text-gray-600 mb-8">
-                  Create your account to start buying farm products directly from the farmers.
+                  Create your account to start buying farm products directly
+                  from the farmers.
                 </p>
               </div>
               <div className="md:w-1/2">
@@ -74,10 +139,11 @@ const Buyer_Register = () => {
                   onSubmit={handleSubmit}
                   className="bg-white p-8 rounded-lg shadow-xl"
                 >
-                  {/* Step 1: Personal Information */}
                   {currentStep === 1 && (
                     <>
-                      <h3 className="text-xl font-bold text-teal-500 mb-4">Step 1: Personal Details</h3>
+                      <h3 className="text-xl font-bold text-teal-500 mb-4">
+                        Step 1: Personal Details
+                      </h3>
                       <div className="mb-4">
                         <label
                           htmlFor="name"
@@ -159,10 +225,11 @@ const Buyer_Register = () => {
                     </>
                   )}
 
-                  {/* Step 2: Aadhar Card & Address Details */}
                   {currentStep === 2 && (
                     <>
-                      <h3 className="text-xl font-bold text-teal-500 mb-4">Step 2: Aadhar & Address Details</h3>
+                      <h3 className="text-xl font-bold text-teal-500 mb-4">
+                        Step 2: Aadhar & Address Details
+                      </h3>
                       <div className="mb-4">
                         <label
                           htmlFor="aadhar"
@@ -175,6 +242,24 @@ const Buyer_Register = () => {
                           id="aadhar"
                           name="aadhar"
                           value={formData.aadhar}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                          placeholder="Enter your Aadhar Number"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          htmlFor="phone"
+                          className="block text-gray-700 font-medium mb-2"
+                        >
+                          Mobile Number
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
                           onChange={handleChange}
                           required
                           className="w-full p-3 border border-gray-300 rounded-lg"
@@ -196,6 +281,7 @@ const Buyer_Register = () => {
                           className="w-full p-3 border border-gray-300 rounded-lg"
                         />
                       </div>
+                      {/* District Dropdown */}
                       <div className="mb-4">
                         <label
                           htmlFor="district"
@@ -209,9 +295,11 @@ const Buyer_Register = () => {
                           value={formData.district}
                           onChange={handleChange}
                           required
-                          className="w-full p-3 border border-gray-300 rounded-lg"
+                          className="w-full overflow-y-scroll p-3 border border-gray-300 rounded-lg"
                         >
-                          <option value="">Select District</option>
+                          <option className="overflow-scroll" value="">
+                            Select District
+                          </option>
                           {districts.map((district) => (
                             <option key={district} value={district}>
                               {district}

@@ -16,13 +16,14 @@ import {
   FaUserCircle,
   FaUsers,
 } from "react-icons/fa";
-import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX } from "react-icons/fi";
 import Buyer_Cart from "../Buyer/Buyer_Cart";
 import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 import CryptoJS from "crypto-js";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/app/lib/superbase/supabaseClient";
 
 const Header = () => {
   const router = useRouter();
@@ -73,6 +74,22 @@ const Header = () => {
     };
 
     verifyUser();
+
+    const supabaseUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user?.id) {
+        setIsLoggedIn(true);
+        setUserType("buyer");
+      } else {
+        setIsLoggedIn(false);
+        setUserType("");
+      }
+    };
+
+    supabaseUser();
   }, []);
 
   const menuItems = [
@@ -108,9 +125,13 @@ const Header = () => {
         { icon: <FaSignOutAlt />, label: "Logout", action: logoutuser },
       ]
     : [
-        { href: "/buyer/profile", icon: <FaUserCheck />, label: "Profile" },
         {
-          href: "/buyer/my-products",
+          href: "/Buyer-Panel/Profile",
+          icon: <FaUserCheck />,
+          label: "Profile",
+        },
+        {
+          href: "/Buyer-Panel/Profile",
           icon: <FaShoppingCart />,
           label: "My Bought Products",
         },
@@ -119,13 +140,18 @@ const Header = () => {
   return (
     <div>
       <ToastContainer />
-      <header className="bg-gradient-to-r from-green-600 to-green-800 text-white shadow-md z-30">
+      <header className="bg-gradient-to-r p-2 from-green-600 to-green-800 text-white shadow-md z-30">
         <div className="flex items-center justify-between px-4 py-4 container mx-auto">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <Image src={Logo} alt="Logo" className="w-8 h-8" />
-            <h1 className="text-xl font-bold">Agrocart</h1>
-          </Link>
+          <div className="flex flex-col md:flex-row items-center md:justify-between gap-2 md:gap-10">
+            <Link href="/" className="flex items-center space-x-2">
+              <Image src={Logo} alt="Logo" className="w-8 h-8" />
+              <h1 className="text-2xl font-bold tracking-wider">Agrocart</h1>
+            </Link>
+            <span className="text-xs text-pink-200 text-center md:text-left capitalize underline underline-offset-4">
+              The hands that feed us deserve to be held high!
+            </span>
+          </div>
 
           {/* Sidebar Toggle */}
           <button

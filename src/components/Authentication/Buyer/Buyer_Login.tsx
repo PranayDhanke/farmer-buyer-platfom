@@ -2,16 +2,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/app/lib/superbase/supabaseClient";
+import { toast, ToastContainer } from "react-toastify";
 
 const Buyer_Login = () => {
-
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -19,13 +24,29 @@ const Buyer_Login = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push("/Buyer-Panel")
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+      if (data.user) {
+        toast.success("Login Successfull");
+        router.push("/Buyer-Panel/Profile");
+      }
+
+      if (error) {
+        toast.error("Buyer Authentication Failed");
+      }
+    } catch {
+      toast.error("Buyer Authentication Failed");
+    }
   };
 
   return (
     <div id="buyer-login" className="font-sans bg-white">
+      <ToastContainer />
       <main>
         <section className="bg-gradient-to-b from-green-50 to-white py-12 md:py-20">
           <div className="container mx-auto px-4 md:px-6">
@@ -101,7 +122,9 @@ const Buyer_Login = () => {
                     <Link
                       href="/create_account/Buyer"
                       className="text-green-600 hover:text-green-800"
-                    >Register here</Link>
+                    >
+                      Register here
+                    </Link>
                   </p>
                 </form>
               </div>

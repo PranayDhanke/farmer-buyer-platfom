@@ -9,13 +9,11 @@ import {
   FaCartPlus,
   FaRegHandshake,
   FaArrowRight,
-} from "react-icons/fa"; // Importing specific icons from react-icons
-import images from "@/../public/images/dan-meyers-0AgtPoAARtE-unsplash.jpg"
-import { SiTrueup } from "react-icons/si";
+} from "react-icons/fa";
+import images from "@/../public/images/dan-meyers-0AgtPoAARtE-unsplash.jpg";
+
 import MarketPrices from "../extra/MarketPrices";
 const Home = () => {
-
-  
   return (
     <div>
       <div className="w-full font-sans bg-white">
@@ -153,7 +151,7 @@ const Home = () => {
             </div>
           </section>
         </main>
-      </div>-
+      </div>
     </div>
   );
 };

@@ -20,19 +20,19 @@ const Farmer_Profile_Edit = () => {
   }
 
   const [formData, setFormData] = useState<FormData>({
-    name: "Farmer Priya",
-    email: "farmer.priya@example.com",
-    farmName: "Priya Farms",
-    location: "Punjab",
-    phone: "1234567890",
+    name: "",
+    email: "",
+    farmName: "",
+    location: "",
+    phone: "",
     profilePhoto: null,
-    district: "Amritsar",
-    taluka: "Tarn Taran",
-    city: "Amritsar",
-    aadhar: "1234 5678 9101",
-    mainCrops: "Basmati Rice",
+    district: "",
+    taluka: "",
+    city: "",
+    aadhar: "",
+    mainCrops: "",
     aadharPhoto: null,
-    farmType: "Organic",
+    farmType: "",
   });
 
   const [currentStep, setCurrentStep] = useState(1);
