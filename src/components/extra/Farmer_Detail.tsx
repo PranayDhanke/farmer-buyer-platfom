@@ -141,12 +141,13 @@ const Farmer_Detail = () => {
                     className="bg-white rounded-xl overflow-hidden shadow-md p-6 mb-8"
                   >
                     <div className="flex items-center mb-6 ">
-                      <div className="relative w-[70px] h-[70px] mr-2 rounded-full ">
+                      <div className="relative w-[70px] h-[70px] mr-2 ">
                         <Image
                           src={selectedFarmer.profilePhoto || image}
                           alt={selectedFarmer.name}
                           fill
                           priority
+                          className="rounded-full"
                           sizes="800px"
                         />
                       </div>

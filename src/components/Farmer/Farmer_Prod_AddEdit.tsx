@@ -1,11 +1,11 @@
 "use client";
 import { ChangeEvent, useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
-import CryptoJS from "crypto-js";
 import { VscLoading } from "react-icons/vsc";
 import { LiaCheckCircle } from "react-icons/lia";
+import { onAuthStateChanged } from "firebase/auth";
+import { fireAuth } from "@/app/lib/Firebase/Firebase";
 
 const Farmer_Prod_AddEdit = ({
   isEdit,
@@ -33,6 +33,7 @@ const Farmer_Prod_AddEdit = ({
     image: null,
     category: "", // Added category field
   });
+
   const [isEditing] = useState<boolean>(isEdit);
   const [loading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -40,38 +41,54 @@ const Farmer_Prod_AddEdit = ({
   const [isuser, setisUser] = useState(false);
   const [uid, setUid] = useState("");
 
-  useEffect(() => {
-    const idToken = Cookies.get("firebase_token");
-    const key = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
+  const [farmer, setFarmer] = useState({
+    name: "",
+    district: "",
+    taluka: "",
+    city: "",
+    profilePhoto: "",
+    state: "Maharashtra",
+  });
 
+  useEffect(() => {
     const verifyAndLoad = async () => {
-      if (!idToken) {
-        setisUser(false);
-        return;
-      }
-      setisUser(true);
-      try {
-        // Step 1: Verify user
-        const encdata = Cookies.get("Uid");
-        if (key && encdata) {
-          const decUID = CryptoJS.AES.decrypt(encdata, key).toString(
-            CryptoJS.enc.Utf8
-          );
-          setUid(decUID);
+      onAuthStateChanged(fireAuth, async (user) => {
+        if (user?.uid) {
+          const profileRes = await fetch("/api/Farmer/profile/get", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ uid: user.uid }),
+          });
+
+          if (profileRes.ok) {
+            const profileData = await profileRes.json();
+            const mainData = profileData.data;
+
+            if (mainData) {
+              setFarmer(mainData);
+            } else {
+              toast.error("Farmer profile not found.");
+              return;
+            }
+          } else {
+            toast.error("Failed to load profile.");
+          }
+          setisUser(true);
+          setUid(user.uid);
+        } else {
+          setisUser(false);
         }
-      } catch {
-        toast.error("Error");
-      }
+      });
     };
     verifyAndLoad();
 
-    if (isEdit && idToken) {
+    if (isEdit && isuser) {
       const loadEdit = async () => {
         try {
-          const docId = await id;
+          const docId = id;
           const res = await fetch(`/api/Farmer/Product/getSingle`, {
             method: "POST",
-            body:JSON.stringify({id:docId})
+            body: JSON.stringify({ id: docId }),
           });
 
           if (res.ok) {
@@ -87,7 +104,7 @@ const Farmer_Prod_AddEdit = ({
 
       loadEdit();
     }
-  }, [id, isEdit]);
+  }, [id, isEdit , isuser]);
 
   const handleFileChanges = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
@@ -104,24 +121,18 @@ const Farmer_Prod_AddEdit = ({
 
     setIsLoading(true);
 
-    const cookie = Cookies.get("userSession");
-    if (!cookie) return new Response("Unauthorized", { status: 401 });
-
-    const { name, profilePhoto, district, taluka, city, state } =
-      JSON.parse(cookie);
-
     const formData = new FormData();
 
-    formData.append("name", name);
-    formData.append("profilePhoto", profilePhoto);
-    formData.append("district", district);
-    formData.append("taluka", taluka);
-    formData.append("city", city);
-    formData.append("state", state);
+    formData.append("name", farmer.name);
+    formData.append("profilePhoto", farmer.profilePhoto);
+    formData.append("district", farmer.district);
+    formData.append("taluka", farmer.taluka);
+    formData.append("city", farmer.city);
+    formData.append("state", farmer.state);
 
     formData.append("uid", uid);
     formData.append("prod_name", newProduct.prod_name);
-    formData.append("price" ,(newProduct.price.toString()));
+    formData.append("price", newProduct.price.toString());
     formData.append("description", newProduct.description);
     formData.append("category", newProduct.category);
     if (newProduct.image) {
@@ -133,6 +144,8 @@ const Farmer_Prod_AddEdit = ({
       method: "POST",
       body: formData,
     });
+
+    toast.loading("Wait image is uploading ");
 
     if (res.ok) {
       toast.success("Product added successfully");
@@ -150,7 +163,7 @@ const Farmer_Prod_AddEdit = ({
     const formData = new FormData();
     formData.append("uid", docId);
     formData.append("prod_name", newProduct.prod_name);
-    formData.append("price" , newProduct.price.toString()) ;
+    formData.append("price", newProduct.price.toString());
     formData.append("description", newProduct.description);
     formData.append("category", newProduct.category);
 

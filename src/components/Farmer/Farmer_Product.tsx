@@ -5,11 +5,11 @@ import { IoIosFunnel } from "react-icons/io";
 import { MdDelete, MdEdit } from "react-icons/md";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import CryptoJS from "crypto-js";
-import Cookies from "js-cookie";
 import FarmerProductSkeleton from "../skeleton/FarmerProductSkeleton";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { onAuthStateChanged } from "firebase/auth";
+import { fireAuth } from "@/app/lib/Firebase/Firebase";
 
 const Farmer_Product = () => {
   const router = useRouter();
@@ -53,52 +53,37 @@ const Farmer_Product = () => {
     }
   };
   useEffect(() => {
-    const idToken = Cookies.get("firebase_token");
-    const key = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
-
     const verifyAndLoad = async () => {
-      if (!idToken) {
-        setisUser(false);
-        router.push("/login/farmer-login")
-        return;
-      }
-
       try {
-        const encdata = Cookies.get("Uid");
-        if (key && encdata) {
-          const decUID = CryptoJS.AES.decrypt(encdata, key).toString(
-            CryptoJS.enc.Utf8
-          );
-          const uid = decUID;
-          if (idToken && uid) {
+        onAuthStateChanged(fireAuth, async (user) => {
+          if (user?.uid) {
             setisUser(true);
-          }
+            const profileRes = await fetch(`/api/Farmer/Product/get`, {
+              method: "POST",
+              body: JSON.stringify({ id: user.uid }),
+            });
 
-          // Step 2: Load farmer profile
-          const profileRes = await fetch(`/api/Farmer/Product/get`, {
-            method: "POST",
-            body:JSON.stringify({id:uid})
-          });
+            if (profileRes.ok) {
+              const productData = await profileRes.json();
 
-          if (profileRes.ok) {
-            const productData = await profileRes.json();
+              const mainData = productData.products;
 
-            const mainData = productData.products;
-
-            if (mainData) {
-              setCount(mainData.length); // set count first
-              setProduct(mainData);
-              setloading(false);
+              if (mainData) {
+                setCount(mainData.length); // set count first
+                setProduct(mainData);
+                setloading(false);
+              } else {
+                toast.error("Farmer Products not found.");
+              }
             } else {
-              toast.error("Farmer Products not found.");
+              toast.error("Failed to load Products.");
             }
           } else {
-            toast.error("Failed to load Products.");
+            router.push("/login/farmer-login");
           }
-        }
-      } catch (err) {
+        });
+      } catch {
         toast.error("Something went wrong while loading Product.");
-        console.error(err);
       }
     };
 
@@ -124,7 +109,6 @@ const Farmer_Product = () => {
 
     return isCategoryMatch && isPriceMatch && isSearchMatch;
   });
-
 
   return (
     <div className="font-sans bg-gray-50">

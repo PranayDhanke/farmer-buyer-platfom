@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import ContactFarmerPage from "../Farmer/ContactFarmerPage";
+
 
 const AboutUs = () => {
   return (
@@ -15,7 +15,7 @@ const AboutUs = () => {
               transparency and efficiency in direct farmer-to-consumer sales.
             </p>
           </div>
-          <ContactFarmerPage />
+          
         </div>
     </div>
   );

@@ -1,7 +1,6 @@
-"use client";
-import Farmer_Detail from "@/components/Farmer/Farmer_Detail";
+
+import Farmer_Detail from "@/components/extra/Farmer_Detail";
 import Header from "@/components/Home/Header";
-import React from "react";
 
 const Page = () => {
   return (

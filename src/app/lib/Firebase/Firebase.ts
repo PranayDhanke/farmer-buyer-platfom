@@ -6,10 +6,12 @@ import { getDatabase } from "firebase/database";
 
 
 const firebaseapikey =process.env.NEXT_PUBLIC_FIREBASE_API_KEY 
+const authDomainKey = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+const projectIdenv = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
 const firebaseConfig = {
   apiKey: firebaseapikey,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
+  authDomain:authDomainKey ,
+  projectId: projectIdenv,
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.FIREBASE_MESSANGER_SENDER_ID,
   appId: process.env.FIREBASE_APP_ID,

@@ -18,62 +18,52 @@ import {
 } from "react-icons/fa";
 import { FiMenu, FiX } from "react-icons/fi";
 import Buyer_Cart from "../Buyer/Buyer_Cart";
-import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
-import CryptoJS from "crypto-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/app/lib/superbase/supabaseClient";
+import { AiOutlineProduct, AiOutlineStock } from "react-icons/ai";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { fireAuth } from "@/app/lib/Firebase/Firebase";
 
 const Header = () => {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  const logoutBuyer = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      toast.error("Error logging out");
+    } else {
+      toast.success("Logged out successfully");
+      router.push("/login/buyer-login");
+    }
+  };
 
   const logoutuser = () => {
-    Cookies.remove("firebase_token");
-    Cookies.remove("Uid");
-    Cookies.remove("userSession");
+    signOut(fireAuth);
     toast.success("Logged Out");
     router.push("/login/farmer-login");
     setIsSidebarOpen(false);
   };
 
   useEffect(() => {
-    const idToken = Cookies.get("firebase_token");
-    const encKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
-
-    const verifyUser = async () => {
-      if (idToken) {
-        const res = await fetch("/api/Farmer/Authentication/check-user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token: idToken }),
-        });
-        const data = await res.json();
-        if (data.uid && encKey) {
-          const encUID = CryptoJS.AES.encrypt(data.uid, encKey).toString();
-          Cookies.set("Uid", encUID, { secure: true, sameSite: "strict" });
+    const firebaseUser = () => {
+      onAuthStateChanged(fireAuth, (user) => {
+        if (user?.uid) {
           setUserType("farmer");
+          setUserName("User");
           setIsLoggedIn(true);
         } else {
           setIsLoggedIn(false);
           setUserType("");
-          Cookies.remove("firebase_token");
-          Cookies.remove("Uid");
-          Cookies.remove("userSession");
-          toast.error("Token verification failed. Please login again.");
         }
-      } else {
-        setIsLoggedIn(false);
-        setUserType("");
-      }
+      });
     };
-
-    verifyUser();
 
     const supabaseUser = async () => {
       const {
@@ -81,22 +71,24 @@ const Header = () => {
       } = await supabase.auth.getUser();
 
       if (user?.id) {
-        setIsLoggedIn(true);
         setUserType("buyer");
+        setUserName("User");
+        setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
         setUserType("");
       }
     };
 
+    firebaseUser();
     supabaseUser();
   }, []);
 
   const menuItems = [
     { href: "/", icon: <FaHome />, label: "Home" },
-    { href: "/Products", icon: <FaBoxOpen />, label: "Products" },
+    { href: "/Products", icon: <AiOutlineProduct />, label: "Products" },
     { href: "/farmers", icon: <FaUsers />, label: "Farmers" },
-    { href: "/market-price", icon: <FaInfoCircle />, label: "Market Prices" },
+    { href: "/market-price", icon: <AiOutlineStock />, label: "Market Prices" },
     { href: "/about-us", icon: <FaInfoCircle />, label: "About" },
     { href: "/contact-us", icon: <FaEnvelope />, label: "Contact" },
   ];
@@ -140,23 +132,120 @@ const Header = () => {
   return (
     <div>
       <ToastContainer />
-      <header className="bg-gradient-to-r p-2 from-green-600 to-green-800 text-white shadow-md z-30">
+      <header className="bg-gradient-to-r from-green-600 to-green-800 text-white shadow-md z-30">
         <div className="flex items-center justify-between px-4 py-4 container mx-auto">
           {/* Logo */}
-          <div className="flex flex-col md:flex-row items-center md:justify-between gap-2 md:gap-10">
+          <div className="flex items-center space-x-2">
             <Link href="/" className="flex items-center space-x-2">
               <Image src={Logo} alt="Logo" className="w-8 h-8" />
               <h1 className="text-2xl font-bold tracking-wider">Agrocart</h1>
             </Link>
-            <span className="text-xs text-pink-200 text-center md:text-left capitalize underline underline-offset-4">
-              The hands that feed us deserve to be held high!
-            </span>
           </div>
 
-          {/* Sidebar Toggle */}
+          {/* Nav Links - Large Screen */}
+          <nav className="hidden md:flex items-center space-x-6">
+            {menuItems.map(({ href, label }) => (
+              <Link
+                key={label}
+                href={href}
+                className="flex items-center gap-1 text-white hover:text-yellow-300"
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Auth Links - Large Screen */}
+          <div className="hidden md:flex items-center gap-4 relative">
+            {!isLoggedIn ? (
+              // Login Dropdown (Before Login)
+              <div className="group">
+                {/* Trigger */}
+                <button className="flex items-center gap-1 hover:text-yellow-300">
+                  <FaSignInAlt />
+                  <span>Login</span>
+                </button>
+
+                {/* Dropdown */}
+                <div className="fixed  right-1 top-9 mt-2 hidden group-hover:flex flex-col bg-white text-black rounded shadow-lg min-w-[160px] z-50">
+                  <Link
+                    href="/login/farmer-login"
+                    className="px-4 py-2 hover:bg-green-100 whitespace-nowrap"
+                  >
+                    Farmer Login
+                  </Link>
+                  <Link
+                    href="/login/buyer-login"
+                    className="px-4 py-2 hover:bg-green-100 whitespace-nowrap"
+                  >
+                    Buyer Login
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              // Profile Dropdown (After Login)
+              <div className="group">
+                <button className="flex items-center gap-2 hover:text-yellow-300">
+                  <FaUserCircle className="text-xl" />
+                  <span>{userName?.split("@")[0]}</span>
+                </button>
+                <div className="fixed top-9 right-1 hidden group-hover:block bg-white text-black mt-2 rounded shadow-md z-50 min-w-[180px]">
+                  {userType === "farmer" ? (
+                    <>
+                      <Link
+                        href="/Farmer-Panel/Profile"
+                        className="block px-4 py-2 hover:bg-green-100"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        href="/Farmer-Panel"
+                        className="block px-4 py-2 hover:bg-green-100"
+                      >
+                        My Products
+                      </Link>
+                      <hr />
+                      <button
+                        onClick={logoutuser}
+                        className="w-full text-left px-4 py-2 hover:bg-green-100"
+                      >
+                        <FaSignOutAlt className="inline mr-1" />
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/Buyer-Panel/Profile"
+                        className="block px-4 py-2 hover:bg-green-100"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        href="/Buyer-Panel/Profile"
+                        className="block px-4 py-2 hover:bg-green-100"
+                      >
+                        My Bought Products
+                      </Link>
+                      <hr />
+                      <button
+                        onClick={logoutBuyer}
+                        className="w-full text-left px-4 py-2 hover:bg-green-100"
+                      >
+                        <FaSignOutAlt className="inline mr-1" />
+                        Logout
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar Toggle - Small Screen */}
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="text-white text-2xl"
+            className="md:hidden text-white text-2xl"
             aria-label="Open Menu"
           >
             <FiMenu />
@@ -172,10 +261,10 @@ const Header = () => {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ duration: 0.3 }}
-            className="fixed top-0 left-0 h-full w-2xs bg-white text-gray-800 z-40 shadow-xl"
+            className="fixed top-0 left-0 h-full w-xs p-4 bg-white text-gray-800 z-40 shadow-xl"
           >
             <div className="flex items-center justify-between px-4 py-4 border-b">
-              <h2 className="text-xl font-semibold">Menu</h2>
+              <h2 className="text-2xl font-bold">Menu</h2>
               <button
                 onClick={() => setIsSidebarOpen(false)}
                 className="text-2xl text-gray-600"

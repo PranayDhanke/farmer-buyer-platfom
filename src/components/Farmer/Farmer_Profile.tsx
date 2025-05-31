@@ -2,14 +2,16 @@
 import React, { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
-import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import FarmerProfileSkeleton from "../skeleton/FarmerProfileSkeleton";
-import CryptoJS from "crypto-js";
 import Image from "next/image";
-import image from "@/../public/images/image.png"
+import image from "@/../public/images/image.png";
+import { onAuthStateChanged } from "firebase/auth";
+import { fireAuth } from "@/app/lib/Firebase/Firebase";
+import { useRouter } from "next/navigation";
 
 const Farmer_Profile = () => {
+  const router = useRouter();
   const [isUser, setisUser] = useState(false);
   const [loading, setloading] = useState(true);
   const [farmer, setFarmer] = useState({
@@ -27,86 +29,46 @@ const Farmer_Profile = () => {
     aadharPhoto: "",
     state: "Maharashtra",
     rating: 0,
+    wallet: 0,
   });
 
   useEffect(() => {
-    const key = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
-    const encdata = Cookies.get("Uid")
-    const idToken = Cookies.get("firebase_token");
-
-    if (!idToken) {
-      setisUser(false);
-      return;
-    }
     const verifyAndLoad = async () => {
       try {
-        if (key && encdata) {
-          const decUID = CryptoJS.AES.decrypt(encdata, key).toString(CryptoJS.enc.Utf8);  
-          const tempUid = decUID.toString();      
-          if (idToken && tempUid) {
+        onAuthStateChanged(fireAuth, async (user) => {
+          if (user?.uid) {
             setisUser(true);
-          }
-          const profileRes = await fetch("/api/Farmer/profile/get", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ uid: tempUid }),
-          });
-  
-          if (profileRes.ok) {
-            const profileData = await profileRes.json();
-            const mainData = profileData.data;
-  
-            if (mainData) {
-              setFarmer({
-                id: mainData.id || "",
-                name: mainData.name || "",
-                email: mainData.email || "",
-                phone: mainData.phone || "",
-                aadhar: mainData.aadhar || "",
-                mainCrop: mainData.mainCrops || "",
-                farmType: mainData.farmType || "",
-                district: mainData.district || "",
-                taluka: mainData.taluka || "",
-                city: mainData.city || "",
-                profilePhoto: mainData.profilePhoto || null,
-                aadharPhoto: mainData.aadharPhoto || "",
-                state: "Maharashtra",
-                rating: mainData.rating || 0,
-              });
-  
-              const userdata = {
-                name: mainData.name || "",
-                profilePhoto: mainData.profilePhoto || null,
-                district: mainData.district || "",
-                taluka: mainData.taluka || "",
-                city: mainData.city || "",
-                state: "Maharashtra",
-              };
-  
-              Cookies.set("userSession", JSON.stringify(userdata), {
-                secure: true,
-                sameSite: "lax",
-              });
-  
-              setloading(false);
-              return;
+            const profileRes = await fetch("/api/Farmer/profile/get", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ uid: user.uid }),
+            });
+
+            if (profileRes.ok) {
+              const profileData = await profileRes.json();
+              const mainData = profileData.data;
+
+              if (mainData) {
+                setFarmer(mainData);
+
+                setloading(false);
+                return;
+              } else {
+                toast.error("Farmer profile not found.");
+                return;
+              }
             } else {
-              toast.error("Farmer profile not found.");
-              return;
+              toast.error("Failed to load profile.");
             }
           } else {
-            toast.error("Failed to load profile.");
+            router.push("/login/farmer-login");
           }
-        }
-      } catch (err) {
-        toast.error("Something went wrong while loading profile.");
-        console.error(err);
-      }
-
+        });
+      } catch {}
     };
 
     verifyAndLoad();
-  }, []);
+  }, [isUser , router]);
 
   return (
     <div>
@@ -126,7 +88,7 @@ const Farmer_Profile = () => {
                   width={96}
                   height={96}
                   className="w-24 h-24 rounded-full object-cover"
-                  priority 
+                  priority
                 />
                 <h2 className="text-xl font-bold text-gray-800">
                   {farmer.name}
@@ -216,13 +178,28 @@ const Farmer_Profile = () => {
                     {farmer.state}
                   </p>
                 </div>
+                <div className="bg-white rounded-lg shadow-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                    Wallet
+                  </h3>
+                  <div className="flex gap-5 items-center">
+                    <p className="text-gray-600">
+                      Total Amount : {farmer.wallet}
+                    </p>
+                    <button className="bg-blue-600 text-white p-2 text-xs cursor-pointer rounded-full hover:bg-blue-700 transition-colors duration-200">
+                      Withdraw Amount
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
         </div>
       ) : (
         <div>
-          <h1 className="mx-auto text-center text-xl my-20">Login First . . .</h1>
+          <h1 className="mx-auto text-center text-xl my-20">
+            Login First . . .
+          </h1>
         </div>
       )}
     </div>

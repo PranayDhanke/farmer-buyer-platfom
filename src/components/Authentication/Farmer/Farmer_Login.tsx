@@ -3,7 +3,8 @@ import React, { ChangeEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
-import Cookies from "js-cookie";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { fireAuth } from "@/app/lib/Firebase/Firebase";
 
 const Farmer_Login = () => {
   const router = useRouter();
@@ -25,32 +26,12 @@ const Farmer_Login = () => {
     const { email, password } = formData;
 
     try {
-      const response = await fetch("/api/Farmer/Authentication/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && response.status === 200) {
-        toast.success("Login successful");
-
-        const idToken = data.idToken;
-
-        Cookies.set("firebase_token", idToken, {
-          expires: 7,
-          secure: true,
-          sameSite: "Strict",
-        });
-
+      const user = signInWithEmailAndPassword(fireAuth, email, password);
+      if ((await user).user.uid) {
+        toast.success("Login Success");
         router.push("/Farmer-Panel/Profile");
       } else {
-        toast.error(data.error || "Authentication failed");
-
-        Cookies.remove("firebase_token");
-        Cookies.remove("Uid");
-        Cookies.remove("userSession");
+        toast.error("Authentication failed");
       }
     } catch {
       toast.error("Authentication Error. Please try again.");
@@ -131,7 +112,7 @@ const Farmer_Login = () => {
                     </Link>
                   </div>
                   <p className="text-center text-sm text-gray-600">
-                    {"Don't have an account?"}
+                    {"Don't have an account ? "}
                     <Link
                       href="/create_account/Farmer"
                       className="text-green-600 hover:text-green-800"
