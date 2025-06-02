@@ -10,7 +10,8 @@ import FarmerListSkeleton from "../skeleton/FarmerListSkeleton";
 const Farmer_List = () => {
   // State for search input and filters
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedState, setSelectedState] = useState("All");
+  const [selectedState, setSelectedState] = useState("Maharashtra");
+  const [selectedDist, setSelectedDist] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false); // State for opening/closing filter dropdown
 
   const [loading, setloding] = useState(true);
@@ -39,7 +40,7 @@ const Farmer_List = () => {
         const data = await res.json();
         const farmerData = await data.farmers;
         setFarmer(farmerData);
-        setloding(false)
+        setloding(false);
       }
     };
     getDocs();
@@ -49,9 +50,13 @@ const Farmer_List = () => {
   const filteredFarmers = farmers.filter((farmer) => {
     const isStateMatch =
       selectedState === "All" || farmer.state === selectedState;
-    const isSearchMatch =
-      farmer.name.toLowerCase().includes(searchQuery.toLowerCase()) 
-    return isStateMatch && isSearchMatch;
+
+    const isDistrictMatch =
+      selectedDist === "All" || farmer.district === selectedDist;
+    const isSearchMatch = farmer.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    return isStateMatch && isSearchMatch && isDistrictMatch;
   });
 
   return (
@@ -95,10 +100,20 @@ const Farmer_List = () => {
                       onChange={(e) => setSelectedState(e.target.value)}
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     >
-                      <option value="All">All States</option>
-                      <option value="Punjab">Punjab</option>
                       <option value="Maharashtra">Maharashtra</option>
-                      <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    </select>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 mb-2">District</label>
+                    <select
+                      value={selectedDist}
+                      onChange={(e) => setSelectedDist(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                    >
+                      <option value="All">All Districts</option>
+                      <option value="Nagpur">Nagpur</option>
+                      <option value="Wardha">Wardha</option>
+                      <option value="Amravati">Amravati</option>
                     </select>
                   </div>
                 </div>

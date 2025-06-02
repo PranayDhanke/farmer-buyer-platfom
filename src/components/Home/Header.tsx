@@ -26,6 +26,7 @@ import { AiOutlineProduct, AiOutlineStock } from "react-icons/ai";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { fireAuth } from "@/app/lib/Firebase/Firebase";
 
+
 const Header = () => {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -40,6 +41,9 @@ const Header = () => {
       toast.error("Error logging out");
     } else {
       toast.success("Logged out successfully");
+      setIsLoggedIn(false);
+      setUserType("");
+      setUserName("");
       router.push("/login/buyer-login");
     }
   };
@@ -48,40 +52,56 @@ const Header = () => {
     signOut(fireAuth);
     toast.success("Logged Out");
     router.push("/login/farmer-login");
+    setIsLoggedIn(false);
+    setUserType("");
+    setUserName("");
     setIsSidebarOpen(false);
   };
 
   useEffect(() => {
-    const firebaseUser = () => {
-      onAuthStateChanged(fireAuth, (user) => {
-        if (user?.uid) {
-          setUserType("farmer");
-          setUserName("User");
-          setIsLoggedIn(true);
-        } else {
-          setIsLoggedIn(false);
-          setUserType("");
-        }
-      });
-    };
-
-    const supabaseUser = async () => {
+    // Initial check
+    const getInitialUser = async () => {
       const {
-        data: { user },
+        data: { user: supabaseUser },
       } = await supabase.auth.getUser();
 
-      if (user?.id) {
-        setUserType("buyer");
-        setUserName("User");
+      if (supabaseUser?.id) {
         setIsLoggedIn(true);
-      } else {
-        setIsLoggedIn(false);
-        setUserType("");
+        setUserType("buyer");
+        setUserName(supabaseUser.email || "Buyer");
       }
     };
 
-    firebaseUser();
-    supabaseUser();
+    getInitialUser();
+
+    // Listen to auth changes (login/logout)
+    const { data: listener } = supabase.auth.onAuthStateChange(
+       (event, session) => {
+        if (session?.user) {
+          setIsLoggedIn(true);
+          setUserType("buyer");
+          setUserName(session.user.email || "Buyer");
+        } else {
+          setIsLoggedIn(false);
+          setUserType("");
+          setUserName("");
+        }
+      }
+    );
+
+    // Firebase Listener (for Farmer)
+    const unsubscribeFirebase = onAuthStateChanged(fireAuth, (user) => {
+      if (user?.uid) {
+        setIsLoggedIn(true);
+        setUserType("farmer");
+        setUserName(user.displayName || user.email || "Farmer");
+      }
+    });
+
+    return () => {
+      listener?.subscription?.unsubscribe(); // Clean up Supabase
+      unsubscribeFirebase(); // Clean up Firebase
+    };
   }, []);
 
   const menuItems = [
@@ -123,7 +143,7 @@ const Header = () => {
           label: "Profile",
         },
         {
-          href: "/Buyer-Panel/Profile",
+          href: "/Buyer-Panel",
           icon: <FaShoppingCart />,
           label: "My Bought Products",
         },
@@ -186,8 +206,8 @@ const Header = () => {
               // Profile Dropdown (After Login)
               <div className="group">
                 <button className="flex items-center gap-2 hover:text-yellow-300">
+                  <span>Welcome, {userName?.split("@")[0]}</span>
                   <FaUserCircle className="text-xl" />
-                  <span>{userName?.split("@")[0]}</span>
                 </button>
                 <div className="fixed top-9 right-1 hidden group-hover:block bg-white text-black mt-2 rounded shadow-md z-50 min-w-[180px]">
                   {userType === "farmer" ? (

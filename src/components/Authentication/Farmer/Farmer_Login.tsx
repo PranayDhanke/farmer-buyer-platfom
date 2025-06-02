@@ -1,10 +1,11 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { fireAuth } from "@/app/lib/Firebase/Firebase";
+import { supabase } from "@/app/lib/superbase/supabaseClient";
 
 const Farmer_Login = () => {
   const router = useRouter();
@@ -12,6 +13,21 @@ const Farmer_Login = () => {
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    const isBuyer = async () => {
+      const {
+        data: { user: supabaseUser },
+      } = await supabase.auth.getUser();
+
+      if (supabaseUser?.id) {
+        toast.info("First Log out as Buyer");
+        router.push("/");
+      }
+    };
+
+    isBuyer();
+  }, [router]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -29,7 +45,8 @@ const Farmer_Login = () => {
       const user = signInWithEmailAndPassword(fireAuth, email, password);
       if ((await user).user.uid) {
         toast.success("Login Success");
-        router.push("/Farmer-Panel/Profile");
+        router.push("/Farmer-Panel");
+        toast.dismiss();
       } else {
         toast.error("Authentication failed");
       }

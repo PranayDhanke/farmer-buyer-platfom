@@ -5,7 +5,7 @@ import RealPriceSkeleton from "../skeleton/RealPriceSkeleton";
 
 export default function MarketPrices() {
   const [loading, setLoading] = useState(true);
-  const [prices, setPrices] = useState([ { commodity: "", modal_price: 0, state: "", district: "" }]);
+  const [prices, setPrices] = useState([ { commodity: "", modal_price: 0, state: "", district: "" , market: "" }]);
   const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination State
@@ -24,7 +24,12 @@ export default function MarketPrices() {
 
         if (res.ok) {
           const data = await res.json();
+
+          console.log(data);
+          
           setPrices(data.records);
+        }else{
+          setPrices([]);
         }
       } catch (error) {
         console.error("Error fetching prices:", error);
@@ -40,7 +45,8 @@ export default function MarketPrices() {
   const filteredPrices = prices.filter(
     (item) =>
       item.commodity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.district.toLowerCase().includes(searchTerm.toLowerCase())
+      item.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.market.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Pagination Logic
@@ -68,7 +74,7 @@ export default function MarketPrices() {
         <div className="mb-6 text-center">
           <input
             type="text"
-            placeholder="Search by commodity or district..."
+            placeholder="Search by commodity , market or district..."
             className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-green-400"
             value={searchTerm}
             onChange={(e) => {
@@ -82,15 +88,16 @@ export default function MarketPrices() {
           <RealPriceSkeleton />
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto mx-auto">
               <table className="min-w-full bg-white border border-gray-200 shadow-sm rounded-md overflow-hidden">
                 <thead className="bg-green-100 text-left text-gray-700 text-sm uppercase tracking-wider">
                   <tr>
-                    <th className="px-6 py-3 border-b">#</th>
-                    <th className="px-6 py-3 border-b">Commodity</th>
-                    <th className="px-6 py-3 border-b">Price (₹)</th>
-                    <th className="px-6 py-3 border-b">District</th>
-                    <th className="px-6 py-3 border-b">State</th>
+                    <th className="px-6 py-3 border">#</th>
+                    <th className="px-6 py-3 border">Commodity</th>
+                    <th className="px-6 py-3 border">Price (₹)</th>
+                    <th className="px-6 py-3 border">Market</th>
+                    <th className="px-6 py-3 border">District</th>
+                    <th className="px-6 py-3 border">State</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -102,19 +109,22 @@ export default function MarketPrices() {
                       transition={{ duration: 0.2 }}
                       className="hover:bg-green-50 transition-colors"
                     >
-                      <td className="px-6 py-3 border-b text-sm text-gray-700">
+                      <td className="px-6 py-3 border text-sm text-gray-700">
                         {indexOfFirstRow + index + 1}
                       </td>
-                      <td className="px-6 py-3 border-b text-sm font-medium text-gray-800">
+                      <td className="px-6 py-3 border text-sm font-medium text-gray-800">
                         {item.commodity}
                       </td>
-                      <td className="px-6 py-3 border-b text-sm text-green-600 font-semibold">
+                      <td className="px-6 py-3 border text-sm text-green-600 font-semibold">
                         ₹{item.modal_price}
                       </td>
-                      <td className="px-6 py-3 border-b text-sm text-gray-700">
+                       <td className="px-6 py-3 border text-sm text-green-600 font-semibold">
+                        {item.market}
+                      </td>
+                      <td className="px-6 py-3 border text-sm text-gray-700">
                         {item.district}
                       </td>
-                      <td className="px-6 py-3 border-b text-sm text-gray-700">
+                      <td className="px-6 py-3 border text-sm text-gray-700">
                         {item.state}
                       </td>
                     </motion.tr>

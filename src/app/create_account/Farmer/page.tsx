@@ -1,14 +1,11 @@
-import Farmer_Register from '@/components/Authentication/Farmer/Farmer_Register'
-import Header from '@/components/Home/Header'
-import React from 'react'
+import Farmer_Register from "@/components/Authentication/Farmer/Farmer_Register";
 
 const page = () => {
   return (
     <div>
-      <Header />
-        <Farmer_Register />
+      <Farmer_Register />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

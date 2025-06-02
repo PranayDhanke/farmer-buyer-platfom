@@ -1,16 +1,32 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/app/lib/superbase/supabaseClient";
 import { toast, ToastContainer } from "react-toastify";
+import { onAuthStateChanged } from "firebase/auth";
+import { fireAuth } from "@/app/lib/Firebase/Firebase";
 
 const Buyer_Login = () => {
+
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(()=>{
+    const isFirebase = () => {
+      onAuthStateChanged(fireAuth , (user)=>{
+        if(user?.uid){
+          toast.info("First Log out as Farmer")
+          router.push('/')
+        }
+      })
+    }
+
+    return ()=> isFirebase();
+  },[router])
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -33,7 +49,8 @@ const Buyer_Login = () => {
       });
       if (data.user) {
         toast.success("Login Successfull");
-        router.push("/Buyer-Panel/Profile");
+        router.push("/Buyer-Panel");
+        toast.dismiss()
       }
 
       if (error) {

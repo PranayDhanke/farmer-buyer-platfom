@@ -243,9 +243,11 @@ const Farmer_Detail = () => {
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     >
                       <option value="All">All Categories</option>
-                      <option value="Grains">Grains</option>
-                      <option value="Vegetables">Vegetables</option>
                       <option value="Fruits">Fruits</option>
+                      <option value="Vegetables">Vegetables</option>
+                      <option value="Grains">Grains</option>
+                      <option value="Dairy">Dairy</option>
+                      <option value="Herbs">Herbs</option>
                     </select>
                   </div>
                   <div className="mb-4">

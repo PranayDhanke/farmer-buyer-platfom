@@ -25,6 +25,9 @@ export default function MarketPrices() {
         const dataRecords = data.records;
         setPrices(dataRecords);
         setLoading(false);
+      }else{
+         setPrices([]);
+        setLoading(false);
       }
     };
     fetDate();

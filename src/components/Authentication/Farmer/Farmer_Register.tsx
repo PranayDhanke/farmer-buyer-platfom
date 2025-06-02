@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { VscLoading } from "react-icons/vsc";
 import { LiaCheckCircle } from "react-icons/lia";
 import { fireAuth } from "@/app/lib/Firebase/Firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const Farmer_Register = () => {
   const router = useRouter();
@@ -135,6 +135,10 @@ const Farmer_Register = () => {
         formData.email,
         formData.password
       );
+
+      await updateProfile(userCredential.user, {
+        displayName: formData.name,
+      });
       const user = userCredential.user;
 
       formDataToSend.append("uid", user.uid);
@@ -154,7 +158,7 @@ const Farmer_Register = () => {
         toast.success("Account created successfully");
         setloading(false);
         setSuccess(true);
-        router.push("/Farmer-Panel/Profile");
+        router.push("/Farmer-Panel");
       } else {
         toast.error("Error While Register");
         // Handle error (e.g., show an error message)

@@ -1,14 +1,10 @@
-import AboutUs from '@/components/Home/AboutUs'
-import Header from '@/components/Home/Header'
-import React from 'react'
-
+import AboutUs from "@/components/Home/AboutUs";
 const page = () => {
   return (
     <div>
-      <Header />
-        <AboutUs />
+      <AboutUs />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

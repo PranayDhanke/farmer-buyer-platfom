@@ -96,6 +96,8 @@ const Farmer_Prod_AddEdit = ({
             const subdata = data.product;
 
             setNewProduct(subdata);
+          }else{
+            router.push("/Farmer-Panel")
           }
         } catch {
           toast.error("Error while Loading the product data");
@@ -104,7 +106,7 @@ const Farmer_Prod_AddEdit = ({
 
       loadEdit();
     }
-  }, [id, isEdit , isuser]);
+  }, [id, isEdit , isuser , router]);
 
   const handleFileChanges = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
@@ -159,7 +161,7 @@ const Farmer_Prod_AddEdit = ({
   // Handle updating the product after editing
   const handleUpdateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    const docId = await id;
+    const docId = id;
     const formData = new FormData();
     formData.append("uid", docId);
     formData.append("prod_name", newProduct.prod_name);

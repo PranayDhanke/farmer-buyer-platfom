@@ -1,14 +1,11 @@
-import Buyer_Profile_Edit from '@/components/Buyer/Buyer_Profile_Edit'
-import Header from '@/components/Home/Header'
-import React from 'react'
+import Buyer_Profile_Edit from "@/components/Buyer/Buyer_Profile_Edit";
 
 const page = () => {
   return (
     <div>
-      <Header />
-        <Buyer_Profile_Edit />
+      <Buyer_Profile_Edit />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;
