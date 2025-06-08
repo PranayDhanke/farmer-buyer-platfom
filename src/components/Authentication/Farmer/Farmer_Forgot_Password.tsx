@@ -1,6 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { fireAuth } from "@/app/lib/Firebase/Firebase";
+import { toast, ToastContainer } from "react-toastify";
 
 const Farmer_Forgot_Password = () => {
   const [email, setEmail] = useState<string>("");
@@ -11,12 +14,15 @@ const Farmer_Forgot_Password = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle forgot password logic here (e.g., send email to reset password)
-    console.log("Password reset request for email: ", email);
+    sendPasswordResetEmail(fireAuth , email);
+   
+    
+    toast.success("Password reset link sended on your mailbox");
   };
 
   return (
     <div id="farmer-forgot-password" className="font-sans bg-white">
+      <ToastContainer />
       <main>
         <section className="bg-gradient-to-b from-green-50 to-white py-12 md:py-20">
           <div className="container mx-auto px-4 md:px-6">

@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/app/lib/superbase/supabaseClient";
+import { toast, ToastContainer } from "react-toastify";
 
 const Buyer_Forgot_Password = () => {
   const [email, setEmail] = useState<string>("");
@@ -12,22 +14,25 @@ const Buyer_Forgot_Password = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle forgot password logic here (e.g., send email to reset password)
-    console.log("Password reset request for email: ", email);
+    supabase.auth.resetPasswordForEmail(email);
+toast.success("Password reset link sended on your mailbox");
+
   };
 
   return (
     <div id="buyer-forgot-password" className="font-sans bg-white">
       <main>
+        <ToastContainer />
         <section className="bg-gradient-to-b from-green-50 to-white py-12 md:py-20">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-10 md:mb-0 md:pr-10">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
-                  Forgot Password{" "}
-                  <span className="text-green-600">Buyer</span>
+                  Forgot Password <span className="text-green-600">Buyer</span>
                 </h2>
                 <p className="text-lg text-gray-600 mb-8">
-                  Please enter your email address to receive password reset instructions.
+                  Please enter your email address to receive password reset
+                  instructions.
                 </p>
               </div>
               <div className="md:w-1/2">
