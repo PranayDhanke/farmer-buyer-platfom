@@ -7,7 +7,6 @@ import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 const Buyer_Register = () => {
-
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -16,7 +15,7 @@ const Buyer_Register = () => {
     password: "",
     profilePhoto: null,
     district: "",
-    phone:"",
+    phone: "",
     taluka: "",
     city: "",
     aadhar: "",
@@ -75,12 +74,18 @@ const Buyer_Register = () => {
       const { data } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
+        options: {
+          data: {
+            full_name: formData.name, // ✅ this adds to user_metadata
+          },
+        },
       });
+
       const formDataToSend = new FormData();
 
       formDataToSend.append("name", formData.name);
       formDataToSend.append("email", formData.email);
-            formDataToSend.append("phone", formData.phone);
+      formDataToSend.append("phone", formData.phone);
       formDataToSend.append("password", formData.password);
       formDataToSend.append("aadhar", formData.aadhar);
       formDataToSend.append("district", formData.district);
@@ -97,17 +102,17 @@ const Buyer_Register = () => {
 
       const uid = data.user?.id;
 
-      if (uid) formDataToSend.append("uid" , uid);
+      if (uid) formDataToSend.append("uid", uid);
 
-      toast.loading("Wait Images are Uploading")
+      toast.loading("Wait Images are Uploading");
       const res = await fetch("/api/Buyer/Authentication/create-account", {
         method: "POST",
-        body: formDataToSend
+        body: formDataToSend,
       });
 
       if (res.ok) {
-        toast.success("Register Successfull")
-        router.push("/Buyer-Panel/Profile")
+        toast.success("Register Successfull");
+        router.push("/Buyer-Panel/Profile");
       }
     } catch {
       toast.error("Error while Register");

@@ -15,8 +15,7 @@ const Buyer_Forgot_Password = () => {
     e.preventDefault();
     // Handle forgot password logic here (e.g., send email to reset password)
     supabase.auth.resetPasswordForEmail(email);
-toast.success("Password reset link sended on your mailbox");
-
+    toast.success("Password reset link sended on your mailbox");
   };
 
   return (

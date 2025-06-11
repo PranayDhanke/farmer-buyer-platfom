@@ -31,7 +31,7 @@ const Farmer_Prod_AddEdit = ({
     price: 0,
     description: "",
     image: null,
-    category: "", // Added category field
+    category: "", 
   });
 
   const [isEditing] = useState<boolean>(isEdit);

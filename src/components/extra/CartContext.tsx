@@ -15,7 +15,7 @@ type CartContextType = {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, action: "increase" | "decrease") => void;
+  updateQuantity: (id: string, val: number) => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
 };
@@ -53,21 +53,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
-  const updateQuantity = (id: string, action: "increase" | "decrease") => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity:
-                action === "increase"
-                  ? item.quantity + 1
-                  : Math.max(item.quantity - 1, 1),
-            }
-          : item
-      )
-    );
-  };
+  const updateQuantity = (id: string, newQuantity: number) => {
+  setCart((prevCart) =>
+    prevCart.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            quantity: Math.max(newQuantity, 1), // Ensure minimum quantity is 1
+          }
+        : item
+    )
+  );
+};
+
 
   return (
     <CartContext.Provider

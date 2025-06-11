@@ -142,6 +142,11 @@ const Header = () => {
           icon: <FaUserCheck />,
           label: "Profile",
         },
+         {
+          href: "/Buyer-Panel",
+          icon: <FaShoppingCart />,
+          label: "Dashboard",
+        },
         {
           href: "/Buyer-Panel",
           icon: <FaShoppingCart />,
@@ -240,6 +245,12 @@ const Header = () => {
                         className="block px-4 py-2 hover:bg-green-100"
                       >
                         Profile
+                      </Link>
+                       <Link
+                        href="/Buyer-Panel"
+                        className="block px-4 py-2 hover:bg-green-100"
+                      >
+                        Dashboard
                       </Link>
                       <Link
                         href="/Buyer-Panel/Profile"

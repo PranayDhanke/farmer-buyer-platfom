@@ -11,11 +11,18 @@ const Buyer_Cart = () => {
   const { cart, removeFromCart, updateQuantity } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  const [selectState, setSelectState] = useState("none");
+
   const totalAmount = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
 
+  const changeQunatity = (numVal: number, itemId: string) => {
+    updateQuantity(itemId, numVal);
+  };
+
+  const procedToPayment = () => {};
   return (
     <div className="font-sans bg-gray-50 relative">
       {/* Floating Cart Button */}
@@ -73,21 +80,36 @@ const Buyer_Cart = () => {
                     {/* Quantity Control */}
                     <div className="flex items-center gap-4">
                       <button
-                        onClick={() => updateQuantity(item.id, "decrease")}
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity - 1)
+                        }
                         className="bg-gray-300 px-2 py-1 rounded hover:bg-gray-400"
                       >
                         −
                       </button>
-                      <span>{item.quantity}</span>
+                      <div className="w-35 border px-3 rounded p-1 flex items-center gap-2 justify-items-start ">
+                        <input
+                          className="w-20 border-none outline-none"
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) =>
+                            changeQunatity(e.target.valueAsNumber, item.id)
+                          }
+                        />
+                        <span>KG</span>
+                      </div>
                       <button
-                        onClick={() => updateQuantity(item.id, "increase")}
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity + 1)
+                        }
                         className="bg-gray-300 px-2 py-1 rounded hover:bg-gray-400"
                       >
                         +
                       </button>
                     </div>
 
-                    {/* Price + Remove */}
+                    {/* Price + Remove + transport */}
+
                     <div className="text-right">
                       <button
                         onClick={() => removeFromCart(item.id)}
@@ -112,9 +134,33 @@ const Buyer_Cart = () => {
               <span>Total:</span>
               <span>₹{totalAmount}</span>
             </div>
-            <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded text-lg">
-              Proceed to Pay
-            </button>
+            <div className="mb-6">
+              <select
+                value={selectState}
+                onChange={(e) => setSelectState(e.target.value)}
+                className="w-full border p-2"
+              >
+                <option value="none">Select Transport Type</option>
+                <option value="farmerTrans">Transport by Farmer</option>
+                <option value="buyerTrans">Transport by Buyer</option>
+              </select>
+            </div>
+            
+            {selectState == "buyerTrans" ? (
+              <button
+                onClick={() => procedToPayment()}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded text-lg"
+              >
+                Proceed to Pay
+              </button>
+            ) : (
+              <button
+                onClick={() => procedToPayment()}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded text-lg"
+              >
+                Order Now
+              </button>
+            )}
           </div>
         </div>
       </div>

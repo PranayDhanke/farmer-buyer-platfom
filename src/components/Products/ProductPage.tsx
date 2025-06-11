@@ -12,7 +12,7 @@ import Negotiate from "../Farmer/extra/Negotiate";
 import { CartProvider, useCart } from "../extra/CartContext";
 
 const ProductPage = () => {
-  const {  addToCart } = useCart();
+  const { addToCart } = useCart();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -64,7 +64,6 @@ const ProductPage = () => {
       quantity,
       image,
     });
-  
   };
 
   const filteredProducts = products.filter((product) => {
@@ -254,20 +253,23 @@ const ProductPage = () => {
               />
 
               {/* Side Panel */}
-              <div className="fixed top-[20%] right-[40%] h-96 w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 rounded-2xl ">
-                <div className="p-4 flex justify-between items-center border-b">
-                  <h2 className="text-xl font-bold">Negotiate</h2>
-                  <button
-                    onClick={() => setIsNegotiateOpen(false)}
-                    className="text-gray-600 hover:text-red-600 text-xl"
-                  >
-                    &times;
-                  </button>
-                </div>
+              <div className="fixed inset-0 z-50 flex items-center justify-center  p-4">
+                <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl transform transition-transform duration-300">
+                  {/* Modal Header */}
+                  <div className="p-4 flex justify-between items-center border-b">
+                    <h2 className="text-xl font-bold">Negotiate</h2>
+                    <button
+                      onClick={() => setIsNegotiateOpen(false)}
+                      className="text-gray-600 hover:text-red-600 text-2xl"
+                    >
+                      &times;
+                    </button>
+                  </div>
 
-                <div className="p-4">
-                  {/* Pass product info to Negotiate component */}
-                  <Negotiate id={id} />
+                  {/* Modal Content */}
+                  <div className="p-4 max-h-[80vh] overflow-y-auto">
+                    <Negotiate id={id} />
+                  </div>
                 </div>
               </div>
             </>
