@@ -1,6 +1,6 @@
 /*
  farmer name , prod name , original price , nego price ,  buyer name
- prod image , accept , reject , buyer id , prod id 
+ prod image , accept , reject , buyer id , prod id , farmer id  
 */
 
 import { fireFireStore } from "@/app/lib/Firebase/Firebase";
@@ -20,17 +20,21 @@ export async function POST(req: NextRequest) {
     const prodId = id;
     const BuyerId = buyerid;
     const BuyerName = buyerName;
+    const accept = false;
+    const reject = false;
 
     await addDoc(collection(fireFireStore, "Negotions"), {
       FarmerName,
       FarmerUid,
+      prodId,
       prod_name,
       imageUrl,
       Origprice,
       NegoPrice,
-      prodId,
       BuyerId,
       BuyerName,
+      accept,
+      reject,
     });
 
     return NextResponse.json({ Message: "Success" }, { status: 201 });

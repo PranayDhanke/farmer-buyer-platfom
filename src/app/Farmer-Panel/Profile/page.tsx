@@ -1,9 +1,9 @@
-import ShowProfile from "@/components/extra/ShowProfile";
+import Farmer_Profile from "@/components/Farmer/Farmer_Profile";
 
 const page = () => {
   return (
     <div>
-      <ShowProfile />
+      <Farmer_Profile />
     </div>
   );
 };

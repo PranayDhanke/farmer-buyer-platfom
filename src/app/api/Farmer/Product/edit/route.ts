@@ -4,7 +4,11 @@ import { doc, updateDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 // Helper to upload file and return public URL
-async function uploadProductImage(uid: string, prod_name: string, file: File): Promise<string> {
+async function uploadProductImage(
+  uid: string,
+  prod_name: string,
+  file: File
+): Promise<string> {
   const filePath = `${uid}/${prod_name + file.name}/${file.name}`;
 
   const { error: uploadError } = await supabase.storage
@@ -23,6 +27,7 @@ type ProductUpdate = {
   category: string;
   description: string;
   imageUrl?: string;
+  quantity: number;
 };
 
 export async function POST(req: NextRequest) {
@@ -32,6 +37,7 @@ export async function POST(req: NextRequest) {
     const uid = formData.get("uid")?.toString() ?? "";
     const prod_name = formData.get("prod_name")?.toString() ?? "";
     const price = parseFloat(formData.get("price")?.toString() ?? "0");
+    const quantity = parseFloat(formData.get("quantity")?.toString() ?? "0");
     const category = formData.get("category")?.toString() ?? "";
     const description = formData.get("description")?.toString() ?? "";
     const prod_image = formData.get("prod_image") as File | null;
@@ -45,12 +51,13 @@ export async function POST(req: NextRequest) {
 
     const docRef = doc(fireFireStore, "Products", uid);
 
-   const updateFields: ProductUpdate = {
-  prod_name,
-  price,
-  category,
-  description,
-};
+    const updateFields: ProductUpdate = {
+      prod_name,
+      price,
+      category,
+      description,
+      quantity,
+    };
 
     if (prod_image && prod_image.size > 0) {
       const imageUrl = await uploadProductImage(uid, prod_name, prod_image);

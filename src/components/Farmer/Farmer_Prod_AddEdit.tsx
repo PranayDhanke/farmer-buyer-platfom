@@ -23,6 +23,7 @@ const Farmer_Prod_AddEdit = ({
     description: string;
     image: File | null; // assuming image could be null or a string URL
     category: string;
+    quantity: number;
   }
 
   const [newProduct, setNewProduct] = useState<Product>({
@@ -31,7 +32,8 @@ const Farmer_Prod_AddEdit = ({
     price: 0,
     description: "",
     image: null,
-    category: "", 
+    category: "",
+    quantity: 0,
   });
 
   const [isEditing] = useState<boolean>(isEdit);
@@ -96,8 +98,8 @@ const Farmer_Prod_AddEdit = ({
             const subdata = data.product;
 
             setNewProduct(subdata);
-          }else{
-            router.push("/Farmer-Panel")
+          } else {
+            router.push("/Farmer-Panel");
           }
         } catch {
           toast.error("Error while Loading the product data");
@@ -106,7 +108,7 @@ const Farmer_Prod_AddEdit = ({
 
       loadEdit();
     }
-  }, [id, isEdit , isuser , router]);
+  }, [id, isEdit, isuser, router]);
 
   const handleFileChanges = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
@@ -137,6 +139,7 @@ const Farmer_Prod_AddEdit = ({
     formData.append("price", newProduct.price.toString());
     formData.append("description", newProduct.description);
     formData.append("category", newProduct.category);
+    formData.append("quantity", newProduct.quantity.toString());
     if (newProduct.image) {
       toast.loading("Wait Image is Uploading");
       formData.append("prod_image", newProduct.image);
@@ -168,6 +171,7 @@ const Farmer_Prod_AddEdit = ({
     formData.append("price", newProduct.price.toString());
     formData.append("description", newProduct.description);
     formData.append("category", newProduct.category);
+    formData.append("quantity", newProduct.quantity.toString());
 
     if (newProduct.image) {
       toast.loading("Wait Image are Uploading");
@@ -233,6 +237,25 @@ const Farmer_Prod_AddEdit = ({
                     setNewProduct({
                       ...newProduct,
                       price: Number(e.target.value),
+                    })
+                  }
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="product-price" className="block text-gray-700">
+                  Quantity (In KG)
+                </label>
+                <input
+                  type="number"
+                  id="quantity"
+                  value={newProduct.quantity}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      quantity: Number(e.target.value),
                     })
                   }
                   className="w-full p-3 border border-gray-300 rounded-lg"

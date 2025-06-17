@@ -145,7 +145,7 @@ const Buyer_Cart = () => {
                 <option value="buyerTrans">Transport by Buyer</option>
               </select>
             </div>
-            
+
             {selectState == "buyerTrans" ? (
               <button
                 onClick={() => procedToPayment()}

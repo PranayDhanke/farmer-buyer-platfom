@@ -16,13 +16,15 @@ export async function POST(req: NextRequest) {
 
     const uid = formData.get("uid") as string;
     const prod_name = formData.get("prod_name") as string;
-    const price = Number(formData.get("price"));   ;
+    const price = Number(formData.get("price"));
+    const quantity = Number(formData.get("quantity"));
     const category = formData.get("category") as string;
     const description = formData.get("description") as string;
     const prod_image = formData.get("prod_image") as File | null;
 
     if (
       !prod_name ||
+      !quantity ||
       !price ||
       !category ||
       !description ||
@@ -40,36 +42,37 @@ export async function POST(req: NextRequest) {
     //Superbase Image Upload
     const { error: imageUploadError } = await supabase.storage
       .from("products")
-      .upload(`${uid}/${prod_name+prod_image.name}/${prod_image.name}`, prod_image);
+      .upload(
+        `${uid}/${prod_name + prod_image.name}/${prod_image.name}`,
+        prod_image
+      );
 
     if (imageUploadError) throw imageUploadError;
 
     // Get the public URL for the profile photo
     const { data: imageData } = supabase.storage
       .from("products")
-      .getPublicUrl(`${uid}/${prod_name+prod_image.name}/${prod_image.name}`);
+      .getPublicUrl(`${uid}/${prod_name + prod_image.name}/${prod_image.name}`);
     const imageUrl = imageData.publicUrl;
 
     //firestore data storage
-    await addDoc(
-      collection(fireFireStore, "Products"),
-      {
-        prod_name,
-        uid,
-        price,
-        category,
-        description,
-        imageUrl,
-        name,
-        profilePhoto,
-        district,
-        taluka,
-        city,
-        state,
-      }
-    );
+    await addDoc(collection(fireFireStore, "Products"), {
+      prod_name,
+      uid,
+      price,
+      quantity,
+      category,
+      description,
+      imageUrl,
+      name,
+      profilePhoto,
+      district,
+      taluka,
+      city,
+      state,
+    });
 
-    return NextResponse.json({"meaage" : "success"} , {status:201})
+    return NextResponse.json({ meaage: "success" }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ "error ": error }, { status: 402 });
   }

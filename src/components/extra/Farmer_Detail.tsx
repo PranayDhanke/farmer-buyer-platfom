@@ -1,27 +1,35 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaStar } from "react-icons/fa";
-import { IoIosFunnel } from "react-icons/io";
-import { FaSearch } from "react-icons/fa";
 import Image from "next/image";
 import image from "@/../public/images/image.png";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import ProductDetailSkeleton from "../skeleton/ProductDetailSkeleton";
 import FarmerDetailListSkeleton from "../skeleton/FarmerDetailListSkeleton";
-import { useCart } from "../extra/CartContext";
+import ProductDisplay from "./ProductDisplay";
+import { VscLoading } from "react-icons/vsc";
+import ContactOpenPanel from "./ContactOpenPanel";
 
 const Farmer_Detail = () => {
   const pathname = usePathname();
 
-  const { addToCart } = useCart();
+  const [openPanel, setOpenPanel] = useState(false);
 
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const setTriggerOpen = (email: string, mobile: string) => {
+    setOpenPanel(true);
+    setEmail(email);
+    setMobile(mobile);
+  };
   const [selectedFarmers, setSelectedFarmers] = useState([
     {
       id: "",
       name: "",
       taluka: "",
       district: "",
+      phone: "",
+      email: "",
       city: "",
       state: "",
       profilePhoto: "",
@@ -31,14 +39,17 @@ const Farmer_Detail = () => {
     },
   ]);
 
-  const [productList, setProductList] = useState([
+  const [products, setProducts] = useState([
     {
+      name: "",
       id: "",
       prod_name: "",
-      description: "",
       price: 0,
-      imageUrl: "",
       category: "",
+      description: "",
+      imageUrl: "",
+      profilePhoto: "",
+      quantity: 0,
     },
   ]);
 
@@ -73,7 +84,7 @@ const Farmer_Detail = () => {
         const productData = await prodRes.json();
         const mainData = await productData.products;
         if (mainData) {
-          setProductList(mainData);
+          setProducts(mainData);
           setProdLoad(false);
         }
       }
@@ -81,44 +92,6 @@ const Farmer_Detail = () => {
 
     loadData();
   }, [pathname]);
-
-  const addItemCart = (
-    id: string,
-    name: string,
-    price: number,
-    quantity: number,
-    image: string
-  ) => {
-    addToCart({
-      id,
-      name,
-      price,
-      quantity,
-      image,
-    });
-  };
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedPriceRange, setSelectedPriceRange] = useState("All");
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  const filteredProducts = productList.filter((product) => {
-    const isCategoryMatch =
-      selectedCategory === "All" || product.category === selectedCategory;
-    const isPriceMatch =
-      selectedPriceRange === "All" ||
-      (selectedPriceRange === "Under 100" && product.price < 100) ||
-      (selectedPriceRange === "100-200" &&
-        product.price >= 100 &&
-        product.price <= 200) ||
-      (selectedPriceRange === "Above 200" && product.price > 200);
-    const isSearchMatch =
-      product.prod_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return isCategoryMatch && isPriceMatch && isSearchMatch;
-  });
 
   return (
     <div className="font-sans bg-gray-50">
@@ -196,147 +169,53 @@ const Farmer_Detail = () => {
                       </p>
                     </div>
 
-                    <Link
-                      href={`/${selectedFarmer.id}`}
+                    <button
+                      onClick={() =>
+                        setTriggerOpen(
+                          selectedFarmer.email,
+                          selectedFarmer.phone
+                        )
+                      }
                       className="w-full px-5 bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200"
                     >
                       Contact Farmer
-                    </Link>
+                    </button>
                   </div>
                 ))
               )}
             </div>
           )}
 
-          {/* Search & Filter UI */}
-          <div className="flex justify-between items-center mb-8">
-            <div className="relative w-max md:w-1/3">
-              <input
-                type="text"
-                placeholder="Search Products"
-                className="w-full p-3 border border-gray-300 rounded-lg"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <FaSearch
-                className="absolute top-4 right-3  text-gray-500"
-                size={20}
-              />
-            </div>
-
-            <div className="relative text-center">
-              <button
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="bg-green-600 text-white py-2 px-4 rounded-md flex items-center space-x-2"
-              >
-                <IoIosFunnel size={20} />
-                <span className="hidden md:block ">Filters</span>
-              </button>
-
-              {isFilterOpen && (
-                <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2 w-48 right-0 z-10">
-                  <div className="mb-4">
-                    <label className="block text-gray-700 mb-2">Category</label>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-lg"
-                    >
-                      <option value="All">All Categories</option>
-                      <option value="Fruits">Fruits</option>
-                      <option value="Vegetables">Vegetables</option>
-                      <option value="Grains">Grains</option>
-                      <option value="Dairy">Dairy</option>
-                      <option value="Herbs">Herbs</option>
-                    </select>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-gray-700 mb-2">
-                      Price Range
-                    </label>
-                    <select
-                      value={selectedPriceRange}
-                      onChange={(e) => setSelectedPriceRange(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-lg"
-                    >
-                      <option value="All">All Prices</option>
-                      <option value="Under 100">Under ₹100</option>
-                      <option value="100-200">₹100 - ₹200</option>
-                      <option value="Above 200">Above ₹200</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Product List */}
-          {filteredProducts.length === 0 ? (
-            <div className="text-center text-xl font-semibold text-gray-600">
-              No Products Found
-            </div>
-          ) : (
+          <section>
+            <h1 className="text-2xl ml-5 font-bold">Products</h1>
             <div>
               {prodload ? (
-                <div>
-                  <ProductDetailSkeleton />
-                </div>
+                <VscLoading className="animate-spin text-2xl text-center w-full" />
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {filteredProducts.map((product) => (
-                    <div
-                      key={product.id}
-                      className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
-                    >
-                      <div className="relative  w-[400px] h-[192px]">
-                        <Image
-                          src={product.imageUrl || image}
-                          alt={product.prod_name}
-                          fill
-                          className="object-cover p-3"
-                          priority
-                        />
-                      </div>
-                      <div className="p-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <h3 className="font-bold text-lg">
-                            {product.prod_name}
-                          </h3>
-                          <span className="text-green-600 font-bold">
-                            ₹{product.price}/kg
-                          </span>
-                        </div>
-                        <div className="flex items-center mb-3">
-                          <span className="text-sm text-gray-700">
-                            Category : {product.category}
-                          </span>
-                        </div>
-                        <p className="text-gray-600 text-sm mb-3">
-                          {product.description}
-                        </p>
-                        <button
-                          onClick={() => {
-                            addItemCart(
-                              product.id,
-                              product.prod_name,
-                              product.price,
-                              1,
-                              product.imageUrl
-                            );
-                          }}
-                          className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200"
-                        >
-                          Add to Cart
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ProductDisplay item={products} displayFilter={true} />
               )}
             </div>
-          )}
+          </section>
         </div>
       </main>
+
+      <section>
+        {openPanel && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
+              <ContactOpenPanel email={email} mobile={mobile} />
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => setOpenPanel(false)}
+                  className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition duration-200"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
     </div>
   );
 };

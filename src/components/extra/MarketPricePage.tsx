@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import RealPriceSkeleton from "../skeleton/RealPriceSkeleton";
+
+import { VscCircle } from "react-icons/vsc";
 
 export default function MarketPrices() {
   const [loading, setLoading] = useState(true);
@@ -85,7 +86,9 @@ export default function MarketPrices() {
         </div>
 
         {loading ? (
-          <RealPriceSkeleton />
+          <div>
+            <VscCircle className="animate-spin text-3xl w-full" />
+          </div>
         ) : (
           <>
             <div className="overflow-x-auto mx-auto">

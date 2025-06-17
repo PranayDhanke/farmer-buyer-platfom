@@ -4,7 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import { IoIosFunnel } from "react-icons/io";
 import Link from "next/link";
 import Image from "next/image";
-
+import { motion } from "framer-motion";
 import lsm from "@/../public/images/image.png";
 import FarmerListSkeleton from "../skeleton/FarmerListSkeleton";
 const Farmer_List = () => {
@@ -58,6 +58,18 @@ const Farmer_List = () => {
       .includes(searchQuery.toLowerCase());
     return isStateMatch && isSearchMatch && isDistrictMatch;
   });
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.4,
+        ease: "easeOut",
+      },
+    },
+  };
 
   return (
     <div className="font-sans bg-gray-50">
@@ -135,8 +147,12 @@ const Farmer_List = () => {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {filteredFarmers.map((farmer) => (
-                    <div
+                    <motion.div
                       key={farmer.id}
+                      variants={cardVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.2 }}
                       className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105"
                     >
                       <div className="relative w-full h-48">
@@ -172,7 +188,7 @@ const Farmer_List = () => {
                           View Detail
                         </Link>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               )}

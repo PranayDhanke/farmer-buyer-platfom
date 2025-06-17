@@ -45,7 +45,7 @@ const Farmer_Product = () => {
 
         if (deleteRes.ok) {
           toast.success("Product Deleted Successfully");
-          router.push("/Farmer-Panel");
+          router.refresh()
         }
       } catch {
         toast.error("Error while Deleting the Product");

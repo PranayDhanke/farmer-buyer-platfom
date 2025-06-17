@@ -1,33 +1,48 @@
-import React from 'react';
-import Farmer_Product from './Farmer_Product';
-import Link from 'next/link';
+import React from "react";
+import Farmer_Product from "./Farmer_Product";
+import Link from "next/link";
+import { FaHandshake, FaStore, FaUserCircle } from "react-icons/fa";
 
 const Farmer_Main = () => {
   return (
-    <div className="container mx-auto px-4 py-6">
-      {/* Header with buttons */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="space-x-4">
-          {/* Add Product button */}
-          <Link href="/Farmer-Panel/Product/Add">
-            <button className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-colors duration-200">
-              Add Product
+    <div className="px-4 sm:px-6 md:px-10 py-8 bg-gray-50 min-h-screen">
+      {/* Top Actions */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10">
+        <h1 className="text-2xl font-bold text-gray-800 text-center sm:text-left">
+          Welcome, Farmer
+        </h1>
+
+        <div className="flex flex-wrap gap-3 justify-center sm:justify-end">
+          <Link href="/Farmer-Panel/Profile">
+            <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">
+              <FaUserCircle />
+              Profile
             </button>
           </Link>
-
-          {/* My Profile button */}
-          <Link href="/Farmer-Panel/Profile">
-            <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors duration-200">
-              My Profile
+          <Link href="/Farmer-Panel/Product/Add">
+            <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition duration-300">
+              <FaStore />
+              Add Products
+            </button>
+          </Link>
+          <Link href="/Farmer-Panel/Negotiation-Requests">
+            <button className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-full hover:bg-amber-600 transition duration-300">
+              <FaHandshake />
+              Negotiation Requests
             </button>
           </Link>
         </div>
       </div>
 
       {/* Farmer Products Section */}
-      <Farmer_Product />
+      <section className="bg-white rounded-xl shadow-md p-6">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">
+          Your Ordered Products
+        </h2>
+        <Farmer_Product />
+      </section>
     </div>
   );
-}
+};
 
 export default Farmer_Main;

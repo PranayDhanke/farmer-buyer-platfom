@@ -42,7 +42,7 @@ const Buyer_Profile = () => {
     };
 
     supabaseUser();
-  },[]);
+  }, []);
   // Example Buyer Data (replace with actual data or state)
   const [buyer, setBuyer] = useState({
     name: "",

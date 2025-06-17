@@ -253,7 +253,7 @@ const Header = () => {
                         Dashboard
                       </Link>
                       <Link
-                        href="/Buyer-Panel/Profile"
+                        href="/Buyer-Panel"
                         className="block px-4 py-2 hover:bg-green-100"
                       >
                         My Bought Products
