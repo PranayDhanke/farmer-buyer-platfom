@@ -4,7 +4,6 @@ import { FaStar } from "react-icons/fa";
 import Image from "next/image";
 import image from "@/../public/images/image.png";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import FarmerDetailListSkeleton from "../skeleton/FarmerDetailListSkeleton";
 import ProductDisplay from "./ProductDisplay";
 import { VscLoading } from "react-icons/vsc";

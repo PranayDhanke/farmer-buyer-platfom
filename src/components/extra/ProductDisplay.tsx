@@ -26,7 +26,7 @@ const ProductDisplay = ({
     profilePhoto: string;
     quantity: number;
   }[];
-  displayFilter: Boolean;
+  displayFilter: boolean;
 }) => {
   const { addToCart } = useCart();
 
@@ -65,7 +65,7 @@ const ProductDisplay = ({
     };
 
     checkBuyer();
-  }, []);
+  }, [item]);
 
   const addCartProd = (
     id: string,

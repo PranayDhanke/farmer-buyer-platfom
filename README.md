@@ -42,8 +42,6 @@
 
 | Package              | Purpose |
 |----------------------|---------|
-| [`js-cookie`](https://www.npmjs.com/package/js-cookie) | Manage cookies (e.g., store tokens/session) |
-| [`crypto-js`](https://www.npmjs.com/package/crypto-js) | Secure encryption/hashing for sensitive data |
 | [`react-loading-skeleton`](https://www.npmjs.com/package/react-loading-skeleton) | Display skeleton placeholders while loading |
 | [`react-toastify`](https://www.npmjs.com/package/react-toastify) | Toast notifications for better UX |
 | [`razorpay`](https://www.npmjs.com/package/razorpay) | Payment integration with Razorpay API |
@@ -60,8 +58,6 @@ Insert gif or link to demo
 - [**Supabase**](https://supabase.io) | Real-time PostgreSQL backend and API  
 - [**Tailwind CSS**](https://tailwindcss.com) | Utility-first CSS framework for responsive UI  
 - [**Razorpay**](https://razorpay.com) | Payment integration for secure online transactions  
-- [**js-cookie**](https://www.npmjs.com/package/js-cookie) | Manage cookies (e.g., store tokens/session)  
-- [**crypto-js**](https://www.npmjs.com/package/crypto-js) | Secure encryption/hashing for sensitive data  
 - [**react-loading-skeleton**](https://www.npmjs.com/package/react-loading-skeleton) | Display skeleton placeholders while loading  
 - [**react-toastify**](https://www.npmjs.com/package/react-toastify) | Toast notifications for better user experience  
 

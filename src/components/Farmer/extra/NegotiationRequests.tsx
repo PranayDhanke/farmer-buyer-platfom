@@ -3,12 +3,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import imgs from "@/../public/images/image.png";
 import { VscLoading } from "react-icons/vsc";
-import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { fireAuth } from "@/app/lib/Firebase/Firebase";
 
 const NegotiationRequests = () => {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState([
     {
