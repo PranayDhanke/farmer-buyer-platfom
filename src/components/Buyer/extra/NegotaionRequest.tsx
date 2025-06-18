@@ -27,8 +27,8 @@ const NegotiationRequest = () => {
       quantity: 0,
       FarmerUid: "",
       name: "",
-      category:"",
-      description:""
+      category: "",
+      description: "",
     },
   ]);
 
@@ -81,13 +81,13 @@ const NegotiationRequest = () => {
     availableQuantity: number,
     uid: string,
     prod_name: string,
-    category:string,
-    description:string
+    category: string,
+    description: string
   ) => {
     const cartItem = cart.find((item) => item.id === id);
     const alreadyInCart = cartItem ? cartItem.quantity : 0;
 
-    const product = requests.find((p) => p.id === id);
+    const product = requests.find((p) => p.prodId === id);
     if (!product) {
       toast.error("Product not found");
       return;
@@ -108,7 +108,7 @@ const NegotiationRequest = () => {
       uid,
       prod_name,
       category,
-      description
+      description,
     });
   };
 

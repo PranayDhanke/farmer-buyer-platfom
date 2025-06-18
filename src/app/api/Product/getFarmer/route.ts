@@ -1,5 +1,5 @@
 import { fireFireStore } from "@/app/lib/Firebase/Firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Product {
@@ -10,7 +10,7 @@ interface Product {
   description: string;
   imageUrl: string;
   quantity: number;
-  // Add other fields if necessary
+  uid: string;
   createdAt: Date | null;
   TransMode: string | null;
   conformId: string | null;
@@ -26,31 +26,28 @@ interface OrderData {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { buyerId } = body;
+    const { farmerId } = body;
 
-    if (!buyerId) {
+    if (!farmerId) {
       return NextResponse.json({ error: "Missing buyerId" }, { status: 400 });
     }
 
-    const q = query(
-      collection(fireFireStore, "Orders"),
-      where("buyerId", "==", buyerId)
-    );
-
-    const querySnapshot = await getDocs(q);
+    const ordersSnapshot = await getDocs(collection(fireFireStore, "Orders"));
     const products: Product[] = [];
 
-    querySnapshot.forEach((doc) => {
+    ordersSnapshot.forEach((doc) => {
       const data = doc.data() as OrderData;
 
       if (Array.isArray(data.cart)) {
         data.cart.forEach((product) => {
-          products.push({
-            ...product,
-            createdAt: data.createdAt?.toDate?.() || null,
-            TransMode: data.TransMode || null,
-            conformId: data.conformId || null,
-          });
+          if (product.uid === farmerId) {
+            products.push({
+              ...product,
+              createdAt: data.createdAt?.toDate?.() || null,
+              TransMode: data.TransMode || null,
+              conformId: data.conformId || null,
+            });
+          }
         });
       }
     });

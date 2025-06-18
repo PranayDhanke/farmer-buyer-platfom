@@ -26,7 +26,6 @@ import { AiOutlineProduct, AiOutlineStock } from "react-icons/ai";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { fireAuth } from "@/app/lib/Firebase/Firebase";
 
-
 const Header = () => {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -76,7 +75,7 @@ const Header = () => {
 
     // Listen to auth changes (login/logout)
     const { data: listener } = supabase.auth.onAuthStateChange(
-       (event, session) => {
+      (event, session) => {
         if (session?.user) {
           setIsLoggedIn(true);
           setUserType("buyer");
@@ -133,6 +132,11 @@ const Header = () => {
           icon: <FaUserCircle />,
           label: "Profile",
         },
+        {
+          href: "/Farmer-Panel",
+          icon: <FaShoppingCart />,
+          label: "Dashboard",
+        },
         { href: "/Farmer-Panel", icon: <FaBoxOpen />, label: "My Products" },
         { icon: <FaSignOutAlt />, label: "Logout", action: logoutuser },
       ]
@@ -142,7 +146,7 @@ const Header = () => {
           icon: <FaUserCheck />,
           label: "Profile",
         },
-         {
+        {
           href: "/Buyer-Panel",
           icon: <FaShoppingCart />,
           label: "Dashboard",
@@ -246,7 +250,7 @@ const Header = () => {
                       >
                         Profile
                       </Link>
-                       <Link
+                      <Link
                         href="/Buyer-Panel"
                         className="block px-4 py-2 hover:bg-green-100"
                       >

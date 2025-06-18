@@ -39,7 +39,6 @@ const Negotiate = ({ id }: { id: string }) => {
         if (res.ok) {
           const data = await res.json();
           const subdata = data.product;
-
           setNewProduct(subdata);
         }
       } catch {

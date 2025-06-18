@@ -5,6 +5,7 @@ import imgs from "@/../public/images/image.png";
 import { VscLoading } from "react-icons/vsc";
 import { onAuthStateChanged } from "firebase/auth";
 import { fireAuth } from "@/app/lib/Firebase/Firebase";
+import { toast } from "react-toastify";
 
 const NegotiationRequests = () => {
   const [loading, setLoading] = useState(true);
@@ -52,8 +53,17 @@ const NegotiationRequests = () => {
       method: "POST",
       body: JSON.stringify({ id, status: check }),
     });
-
+    const toastId = toast("Wait sending request...", {
+      type: "info",
+      autoClose: false, // prevent it from closing immediately
+    });
     if (res.ok) {
+      toast.update(toastId, {
+        render: "Accepted",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
       setRequests((prev) =>
         prev.map((req) =>
           req.id === id

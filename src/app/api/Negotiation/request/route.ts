@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const { newProduct, buyerid, buyerName, id, priceValue } = await req.json();
-
+    
     const FarmerName = newProduct.name;
     const FarmerUid = newProduct.uid;
     const prod_name = newProduct.prod_name;

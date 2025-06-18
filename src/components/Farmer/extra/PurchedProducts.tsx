@@ -1,13 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import imaes from "@/../public/images/image.png";
-import { supabase } from "@/app/lib/superbase/supabaseClient";
+import { onAuthStateChanged } from "firebase/auth";
+import { fireAuth } from "@/app/lib/Firebase/Firebase";
 import { FaCopy } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-const OrderedProduct = () => {
+const PurchasedProducts = () => {
   interface Product {
     id: string;
     prod_name: string;
@@ -19,7 +20,7 @@ const OrderedProduct = () => {
     quantity: number;
     createdAt: Date;
     TransMode: string;
-    conformId: string; // ✅ renamed for consistency
+    conformId: string; // renamed for correctness
   }
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,55 +31,57 @@ const OrderedProduct = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const {
-        data: { user: supabaseUser },
-      } = await supabase.auth.getUser();
+      onAuthStateChanged(fireAuth, async (user) => {
+        if (user?.uid) {
+          const farmerId = user.uid;
+          const res = await fetch("/api/Product/getFarmer", {
+            method: "POST",
+            body: JSON.stringify({ farmerId }),
+          });
 
-      if (supabaseUser?.id) {
-        const buyerId = supabaseUser.id;
-        const res = await fetch("/api/Product/get", {
-          method: "POST",
-          body: JSON.stringify({ buyerId }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setProdData(data.products);
+          if (res.ok) {
+            const data = await res.json();
+            setProdData(data.products);
+          }
         }
-      }
+      });
     };
     getData();
   }, []);
 
-  const filteredProducts = prodData.filter((product) => {
-    const isCategoryMatch =
-      selectedCategory === "All" || product.category === selectedCategory;
+  const filteredProducts =
+    prodData?.filter((product) => {
+      if (!product) return false;
+      const name = product?.prod_name || "";
+      const desc = product.description || "";
 
-    const isPriceMatch =
-      selectedPriceRange === "All" ||
-      (selectedPriceRange === "Under 100" && product.price < 100) ||
-      (selectedPriceRange === "100-200" &&
-        product.price >= 100 &&
-        product.price <= 200) ||
-      (selectedPriceRange === "Above 200" && product.price > 200);
+      const isCategoryMatch =
+        selectedCategory === "All" || product.category === selectedCategory;
 
-    const isSearchMatch =
-      product.prod_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const isPriceMatch =
+        selectedPriceRange === "All" ||
+        (selectedPriceRange === "Under 100" && product.price < 100) ||
+        (selectedPriceRange === "100-200" &&
+          product.price >= 100 &&
+          product.price <= 200) ||
+        (selectedPriceRange === "Above 200" && product.price > 200);
 
-    return isCategoryMatch && isPriceMatch && isSearchMatch;
-  });
+      const isSearchMatch =
+        name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        desc.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return isCategoryMatch && isPriceMatch && isSearchMatch;
+    }) || [];
 
   const handleConfirm = (productId: string) => {
     const confirmId = confirmIds[productId];
     if (!confirmId) {
-      alert("Please enter a Confirm ID");
+      toast.error("Please enter a Confirm ID");
       return;
     }
 
-    // Replace with actual logic or API call
-    console.log(`Confirmed ID for ${productId}:`, confirmId);
-    alert(`Order Confirmed for product ID: ${productId} with ID: ${confirmId}`);
+    // submit logic here
+    toast.success(`Order Confirmed for product ID: ${productId}`);
   };
 
   return (
@@ -130,14 +133,14 @@ const OrderedProduct = () => {
           filteredProducts.map((product) => (
             <div
               key={product.id + product.conformId}
-              className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center hover:shadow-xl transition duration-300"
+              className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition duration-300 flex flex-col items-center"
             >
               <Image
                 src={product.image || imaes}
                 alt={product.prod_name}
-                width={150}
-                height={150}
-                className="rounded-xl object-cover shadow-sm border"
+                width={160}
+                height={160}
+                className="rounded-xl object-cover border shadow"
               />
               <h3 className="text-xl font-semibold text-gray-800 mt-4">
                 {product.prod_name}
@@ -162,10 +165,10 @@ const OrderedProduct = () => {
                   {product.quantity}
                 </p>
                 <p>
-                  <span className="font-medium">Order Type:</span>{" "}
+                  <span className="font-medium">Transport Mode:</span>{" "}
                   {product.TransMode === "buyerTrans"
-                    ? "Transport by Buyer"
-                    : "Transport by Farmer"}
+                    ? "By Buyer"
+                    : "By Farmer"}
                 </p>
                 <p>
                   <span className="font-medium">Ordered At:</span>{" "}
@@ -174,7 +177,7 @@ const OrderedProduct = () => {
               </div>
 
               {/* Confirm Section */}
-              {product.TransMode !== "buyerTrans" ? (
+              {product.TransMode === "buyerTrans" ? (
                 <p className="mt-5 flex items-center gap-2 text-sm text-gray-800">
                   <span className="font-medium">Confirm ID:</span>{" "}
                   {product.conformId}
@@ -203,10 +206,8 @@ const OrderedProduct = () => {
                   <button
                     onClick={() => handleConfirm(product.id)}
                     className={`mt-2 w-full py-2 rounded-lg transition 
-                      confirmIds[product.id]
-                        bg-yellow-600 text-white hover:bg-yellow-700
-                        
-                    `}
+                         bg-yellow-600 text-white hover:bg-yellow-700
+                       `}
                   >
                     Confirm Order
                   </button>
@@ -220,4 +221,4 @@ const OrderedProduct = () => {
   );
 };
 
-export default OrderedProduct;
+export default PurchasedProducts;

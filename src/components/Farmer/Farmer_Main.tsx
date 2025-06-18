@@ -2,6 +2,7 @@ import React from "react";
 import Farmer_Product from "./Farmer_Product";
 import Link from "next/link";
 import { FaHandshake, FaStore, FaUserCircle } from "react-icons/fa";
+import { IoCheckmarkDone } from "react-icons/io5";
 
 const Farmer_Main = () => {
   return (
@@ -29,6 +30,12 @@ const Farmer_Main = () => {
             <button className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-full hover:bg-amber-600 transition duration-300">
               <FaHandshake />
               Negotiation Requests
+            </button>
+          </Link>
+          <Link href="/Farmer-Panel/sold-products">
+            <button className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-full hover:bg-amber-600 transition duration-300">
+              <IoCheckmarkDone />
+              My sold Products
             </button>
           </Link>
         </div>
