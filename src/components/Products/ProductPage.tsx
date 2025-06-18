@@ -16,6 +16,7 @@ const ProductPage = () => {
       imageUrl: "",
       profilePhoto: "",
       quantity: 0,
+      uid:"",
     },
   ]);
 

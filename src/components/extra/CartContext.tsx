@@ -6,9 +6,14 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 type CartItem = {
   id: string;
   name: string;
+  prod_name:string;
   price: number;
   quantity: number;
   image?: string;
+  availableQuantity: number;
+  uid: string;
+  category:string;
+  description:string;
 };
 
 type CartContextType = {
@@ -54,18 +59,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateQuantity = (id: string, newQuantity: number) => {
-  setCart((prevCart) =>
-    prevCart.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            quantity: Math.max(newQuantity, 1), // Ensure minimum quantity is 1
-          }
-        : item
-    )
-  );
-};
-
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              quantity: Math.max(newQuantity, 1), // Ensure minimum quantity is 1
+            }
+          : item
+      )
+    );
+  };
 
   return (
     <CartContext.Provider

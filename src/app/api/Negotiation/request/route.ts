@@ -22,6 +22,9 @@ export async function POST(req: NextRequest) {
     const BuyerName = buyerName;
     const accept = false;
     const reject = false;
+    const quantity = newProduct.quantity;
+    const category = newProduct.category;
+    const description = newProduct.description;
 
     await addDoc(collection(fireFireStore, "Negotions"), {
       FarmerName,
@@ -35,6 +38,9 @@ export async function POST(req: NextRequest) {
       BuyerName,
       accept,
       reject,
+      quantity,
+      category,
+      description,
     });
 
     return NextResponse.json({ Message: "Success" }, { status: 201 });

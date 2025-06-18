@@ -25,10 +25,11 @@ const ProductDisplay = ({
     imageUrl: string;
     profilePhoto: string;
     quantity: number;
+    uid: string;
   }[];
   displayFilter: boolean;
 }) => {
-  const { addToCart } = useCart();
+  const { addToCart, cart } = useCart();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -47,6 +48,7 @@ const ProductDisplay = ({
       imageUrl: "",
       profilePhoto: "",
       quantity: 0,
+      uid: "",
     },
   ]);
 
@@ -72,18 +74,43 @@ const ProductDisplay = ({
     name: string,
     price: number,
     quantity: number,
-    image: string
+    image: string,
+    availableQuantity: number,
+    uid: string,
+    prod_name: string,
+    category: string,
+    description: string
   ) => {
     if (!isBuyer) {
       toast.warn("Please first Login as Buyer");
       return;
     }
+
+    const product = products.find((p) => p.id === id);
+    if (!product) {
+      toast.error("Product not found");
+      return;
+    }
+
+    const cartItem = cart.find((item) => item.id === id);
+    const alreadyInCart = cartItem ? cartItem.quantity : 0;
+
+    if (alreadyInCart + quantity > product.quantity) {
+      toast.warn(`Only ${product.quantity - alreadyInCart} kg left to add.`);
+      return;
+    }
+
     addToCart({
       id,
       name,
       price,
       quantity,
       image,
+      availableQuantity,
+      uid,
+      prod_name,
+      category,
+      description,
     });
   };
 
@@ -259,10 +286,15 @@ const ProductDisplay = ({
                           onClick={() =>
                             addCartProd(
                               product.id,
-                              product.prod_name,
+                              product.name,
                               product.price,
                               1,
-                              product.imageUrl
+                              product.imageUrl,
+                              product.quantity,
+                              product.uid,
+                              product.prod_name,
+                              product.category,
+                              product.description
                             )
                           }
                           className="flex items-center  justify-center gap-1 w-fit px-3 cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors duration-200"

@@ -11,7 +11,7 @@ const NegotiationRequests = () => {
   const [requests, setRequests] = useState([
     {
       id: "",
-      FarmerName: "",
+      BuyerName: "",
       prodId: "",
       prod_name: "",
       imageUrl: "",
@@ -79,7 +79,9 @@ const NegotiationRequests = () => {
           <VscLoading className="text-3xl animate-spin text-gray-500" />
         </div>
       ) : requests.length === 0 ? (
-        <p className="text-center text-gray-600 text-lg">No negotiation requests available.</p>
+        <p className="text-center text-gray-600 text-lg">
+          No negotiation requests available.
+        </p>
       ) : (
         <div className="grid gap-6">
           {requests.map((req) => (
@@ -103,14 +105,23 @@ const NegotiationRequests = () => {
                   {req.prod_name}
                 </h2>
                 <p className="text-gray-600 mt-1">
-                  Farmer: <span className="text-gray-900 font-medium">{req.FarmerName}</span>
+                  Buyer:{" "}
+                  <span className="text-gray-900 font-medium">
+                    {req.BuyerName}
+                  </span>
                 </p>
                 <div className="flex flex-wrap gap-6 mt-3 text-gray-700 text-sm md:text-base">
                   <p>
-                    Original Price: <span className="text-black font-medium">₹{req.Origprice}</span>
+                    Original Price:{" "}
+                    <span className="text-black font-medium">
+                      ₹{req.Origprice}
+                    </span>
                   </p>
                   <p>
-                    Negotiated Price: <span className="text-black font-medium">₹{req.NegoPrice}</span>
+                    Negotiated Price:{" "}
+                    <span className="text-black font-medium">
+                      ₹{req.NegoPrice}
+                    </span>
                   </p>
                 </div>
               </div>

@@ -17,6 +17,7 @@ const List_Product = () => {
       imageUrl: "",
       profilePhoto: "",
       quantity: 0,
+      uid: "",
     },
   ]);
 

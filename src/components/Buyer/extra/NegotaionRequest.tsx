@@ -7,9 +7,10 @@ import { VscLoading } from "react-icons/vsc";
 import { BiTrash } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/extra/CartContext";
+import { toast, ToastContainer } from "react-toastify";
 
 const NegotiationRequest = () => {
-  const { addToCart } = useCart();
+  const { addToCart, cart } = useCart();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState([
@@ -23,6 +24,11 @@ const NegotiationRequest = () => {
       NegoPrice: 0,
       accept: false,
       reject: false,
+      quantity: 0,
+      FarmerUid: "",
+      name: "",
+      category:"",
+      description:""
     },
   ]);
 
@@ -71,14 +77,38 @@ const NegotiationRequest = () => {
     name: string,
     price: number,
     quantity: number,
-    image: string
+    image: string,
+    availableQuantity: number,
+    uid: string,
+    prod_name: string,
+    category:string,
+    description:string
   ) => {
+    const cartItem = cart.find((item) => item.id === id);
+    const alreadyInCart = cartItem ? cartItem.quantity : 0;
+
+    const product = requests.find((p) => p.id === id);
+    if (!product) {
+      toast.error("Product not found");
+      return;
+    }
+
+    if (alreadyInCart + quantity > product.quantity) {
+      toast.warn(`Only ${product.quantity - alreadyInCart} kg left to add.`);
+      return;
+    }
+
     addToCart({
       id,
       name,
       price,
       quantity,
       image,
+      availableQuantity,
+      uid,
+      prod_name,
+      category,
+      description
     });
   };
 
@@ -87,6 +117,7 @@ const NegotiationRequest = () => {
       <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
         Negotiation Requests
       </h1>
+      <ToastContainer />
 
       {loading ? (
         <div className="flex justify-center items-center h-48">
@@ -152,20 +183,26 @@ const NegotiationRequest = () => {
                       Accepted
                     </span>
                     <div>
-                    <button
-                      onClick={() => {
-                        addCart(
-                          req.prodId,
-                          req.prod_name,
-                          req.NegoPrice,
-                          1,
-                          req.imageUrl
-                        );
-                      }}
-                      className="bg-yellow-200 text-yellow-800 cursor-pointer hover:bg-yellow-300 transition font-semibold text-sm px-4 py-1.5 rounded-md"
-                    >
-                      Order Now
-                    </button></div>
+                      <button
+                        onClick={() => {
+                          addCart(
+                            req.prodId,
+                            req.name,
+                            req.NegoPrice,
+                            1,
+                            req.imageUrl,
+                            req.quantity,
+                            req.FarmerUid,
+                            req.prod_name,
+                            req.category,
+                            req.description
+                          );
+                        }}
+                        className="bg-yellow-200 text-yellow-800 cursor-pointer hover:bg-yellow-300 transition font-semibold text-sm px-4 py-1.5 rounded-md"
+                      >
+                        Order Now
+                      </button>
+                    </div>
                   </>
                 ) : req.reject ? (
                   <span className="bg-red-100 text-red-700 font-semibold text-sm px-4 py-1.5 rounded-md">

@@ -49,6 +49,7 @@ const Farmer_Detail = () => {
       imageUrl: "",
       profilePhoto: "",
       quantity: 0,
+      uid: "",
     },
   ]);
 
