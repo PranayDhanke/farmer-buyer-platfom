@@ -1,10 +1,9 @@
-import NegotaionRequest from '@/components/Buyer/extra/NegotaionRequest'
-import React from 'react'
+import NegotiationRequest from "@/components/Buyer/NegotaionRequest"
 
 const page = () => {
   return (
     <div>
-        <NegotaionRequest />
+        <NegotiationRequest />
     </div>
   )
 }

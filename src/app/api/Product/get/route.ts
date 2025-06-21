@@ -3,7 +3,8 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Product {
-  prodId: string;
+  id: string;
+  prodID: string;
   prod_name: string;
   price: number;
   category: string;
@@ -13,14 +14,15 @@ interface Product {
   // Add other fields if necessary
   createdAt: Date | null;
   TransMode: string | null;
-  conformId: string | null;
+  confirmId: string;
+  isDelivered: boolean;
 }
 
 interface OrderData {
-  cart: Omit<Product, "createdAt" | "TransMode" | "conformId">[];
+  cart: Product[];
   createdAt: { toDate: () => Date };
   TransMode: string;
-  conformId: string;
+  id: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -42,14 +44,13 @@ export async function POST(req: NextRequest) {
 
     querySnapshot.forEach((doc) => {
       const data = doc.data() as OrderData;
-
       if (Array.isArray(data.cart)) {
         data.cart.forEach((product) => {
           products.push({
             ...product,
+            id: doc.id,
             createdAt: data.createdAt?.toDate?.() || null,
             TransMode: data.TransMode || null,
-            conformId: data.conformId || null,
           });
         });
       }
@@ -58,6 +59,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ products });
   } catch (err) {
     console.error("Error in get orders:", err);
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (err as Error).message },
+      { status: 500 }
+    );
   }
 }

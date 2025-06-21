@@ -73,7 +73,7 @@ const NegotiationRequest = () => {
   };
 
   const addCart = (
-    id: string,
+    prodID: string,
     name: string,
     price: number,
     quantity: number,
@@ -84,10 +84,10 @@ const NegotiationRequest = () => {
     category: string,
     description: string
   ) => {
-    const cartItem = cart.find((item) => item.id === id);
+    const cartItem = cart.find((item) => item.prodID === prodID);
     const alreadyInCart = cartItem ? cartItem.quantity : 0;
 
-    const product = requests.find((p) => p.prodId === id);
+    const product = requests.find((p) => p.prodId === prodID);
     if (!product) {
       toast.error("Product not found");
       return;
@@ -98,8 +98,15 @@ const NegotiationRequest = () => {
       return;
     }
 
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let confirmId = "";
+    for (let i = 0; i < 10; i++) {
+      confirmId += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
     addToCart({
-      id,
+      prodID,
       name,
       price,
       quantity,
@@ -109,6 +116,11 @@ const NegotiationRequest = () => {
       prod_name,
       category,
       description,
+      confirmId,
+      isDelivered: false,
+      hasPayment: false,
+      hasConformed:false,
+      hasReject:false,
     });
   };
 
@@ -187,7 +199,7 @@ const NegotiationRequest = () => {
                         onClick={() => {
                           addCart(
                             req.prodId,
-                            req.name,
+                            req.FarmerName,
                             req.NegoPrice,
                             1,
                             req.imageUrl,

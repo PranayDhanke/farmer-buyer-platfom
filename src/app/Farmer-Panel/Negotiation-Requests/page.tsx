@@ -1,5 +1,4 @@
-import NegotiationRequests from '@/components/Farmer/extra/NegotiationRequests'
-import React from 'react'
+import NegotiationRequests from "@/components/Farmer/NegotiationRequests"
 
 const page = () => {
   return (

@@ -7,8 +7,11 @@ import images from "@/../public/images/image.png";
 import { useCart } from "../extra/CartContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/app/lib/superbase/supabaseClient";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const Buyer_Cart = () => {
+  const router = useRouter();
   const { cart, removeFromCart, updateQuantity } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectState, setSelectState] = useState("none");
@@ -41,21 +44,13 @@ const Buyer_Cart = () => {
   };
 
   const proceedToPayment = async (state: string) => {
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
-    for (let i = 0; i < 10; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-
+    const walletAmount = totalAmount;
     if (state == "buyerTrans") {
-      const walletAmount = totalAmount;
       const res = await fetch("/api/Product/Buy", {
         method: "POST",
         body: JSON.stringify({
           cart,
           state,
-          result,
           walletAmount,
           buyerId,
           buyername,
@@ -63,9 +58,25 @@ const Buyer_Cart = () => {
       });
 
       if (res.ok) {
-        alert("Success");
+        toast.success("Order Has be Purchesed");
+        router.push("/Buyer-Panel");
       }
     } else {
+      const res = await fetch("/api/Product/Buy", {
+        method: "POST",
+        body: JSON.stringify({
+          cart,
+          state,
+          walletAmount,
+          buyerId,
+          buyername,
+        }),
+      });
+
+      if (res.ok) {
+        toast.success("Order Request has been Submitted");
+        router.push("/Buyer-Panel");
+      }
     }
   };
 
@@ -108,7 +119,7 @@ const Buyer_Cart = () => {
                   const maxQty = item.availableQuantity || 1;
                   return (
                     <div
-                      key={item.id}
+                      key={item.prodID}
                       className="flex flex-wrap sm:flex-nowrap items-center gap-4 border-b pb-4"
                     >
                       <div className="flex items-center gap-4 w-full sm:w-1/2">
@@ -127,7 +138,7 @@ const Buyer_Cart = () => {
                         <button
                           onClick={() =>
                             item.quantity > 1 &&
-                            updateQuantity(item.id, item.quantity - 1)
+                            updateQuantity(item.prodID, item.quantity - 1)
                           }
                           disabled={item.quantity <= 1}
                           className={`px-2 py-1 rounded ${
@@ -148,7 +159,7 @@ const Buyer_Cart = () => {
                             onChange={(e) =>
                               changeQuantity(
                                 parseInt(e.target.value),
-                                item.id,
+                                item.prodID,
                                 maxQty
                               )
                             }
@@ -158,7 +169,7 @@ const Buyer_Cart = () => {
                         <button
                           onClick={() =>
                             item.quantity < maxQty &&
-                            updateQuantity(item.id, item.quantity + 1)
+                            updateQuantity(item.prodID, item.quantity + 1)
                           }
                           disabled={item.quantity >= maxQty}
                           className={`px-2 py-1 rounded ${
@@ -173,7 +184,7 @@ const Buyer_Cart = () => {
 
                       <div className="flex flex-col items-end w-full sm:w-1/6 mt-3 sm:mt-0">
                         <button
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(item.prodID)}
                           className="text-red-500 hover:text-red-700"
                         >
                           <FaTrash />

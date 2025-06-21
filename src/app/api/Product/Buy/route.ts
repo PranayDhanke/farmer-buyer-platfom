@@ -9,27 +9,31 @@ import {
 } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
+interface Product {
+  price: number;
+  quantity: number;
+  uid: string;
+  id: string;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { cart, state, result, walletAmount, buyerId, buyername } = body;
+    const { cart, state, walletAmount, buyerId, buyername } = body;
 
     if (!cart || cart.length === 0 || !buyerId) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
 
-    const conformId = result;
     const TransMode = state;
-    const isDelivered = false;
     const createdAt = Timestamp.now();
 
-    // 1. Loop through each item in the cart
+    // 1. Update product quantities
     for (const item of cart) {
       const { id, quantity } = item;
 
       if (!id || typeof quantity !== "number") continue;
 
-      // 2. Reference to the product document
       const productRef = doc(fireFireStore, "Products", id);
       const productSnap = await getDoc(productRef);
 
@@ -37,8 +41,7 @@ export async function POST(req: NextRequest) {
         const currentData = productSnap.data();
         const currentAvailable = currentData.quantity || 0;
 
-        // 3. Update the product quantity
-        const newAvailable = Math.max(currentAvailable - quantity, 0); // Avoid negative
+        const newAvailable = Math.max(currentAvailable - quantity, 0);
 
         await updateDoc(productRef, {
           quantity: newAvailable,
@@ -46,18 +49,35 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 4. Add the order
+    // 2. Create order
     const ordersRef = collection(fireFireStore, "Orders");
     await addDoc(ordersRef, {
       cart,
-      conformId,
       TransMode,
       walletAmount,
       buyerId,
       buyername,
       createdAt,
-      isDelivered,
     });
+
+    if (TransMode == "buyerTrans") {
+      // 3. Update each farmer's wallet
+      for (const prod of cart as Product[]) {
+        const farmId = prod.uid;
+        const amountToAdd = prod.quantity * prod.price;
+        const farmerRef = doc(fireFireStore, "farmers", farmId);
+        const farmerSnap = await getDoc(farmerRef);
+
+        if (farmerSnap.exists()) {
+          const currentData = farmerSnap.data();
+          const currentWallet = currentData.wallet;
+
+          await updateDoc(farmerRef, {
+            wallet: currentWallet + amountToAdd,
+          });
+        }
+      }
+    }
 
     return NextResponse.json({ Message: "Success" });
   } catch (err) {

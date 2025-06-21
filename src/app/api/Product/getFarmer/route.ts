@@ -3,7 +3,8 @@ import { collection, getDocs } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Product {
-  prodId: string;
+  id: string;
+  prodID: string;
   prod_name: string;
   price: number;
   category: string;
@@ -14,13 +15,16 @@ interface Product {
   createdAt: Date | null;
   TransMode: string | null;
   conformId: string | null;
+  buyerId: string;
 }
 
 interface OrderData {
-  cart: Omit<Product, "createdAt" | "TransMode" | "conformId">[];
+  cart: Product[];
   createdAt: { toDate: () => Date };
   TransMode: string;
   conformId: string;
+  id: string;
+  buyerId: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -43,9 +47,11 @@ export async function POST(req: NextRequest) {
           if (product.uid === farmerId) {
             products.push({
               ...product,
+              id: doc.id,
               createdAt: data.createdAt?.toDate?.() || null,
               TransMode: data.TransMode || null,
               conformId: data.conformId || null,
+              buyerId: data.buyerId || "",
             });
           }
         });
@@ -55,6 +61,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ products });
   } catch (err) {
     console.error("Error in get orders:", err);
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (err as Error).message },
+      { status: 500 }
+    );
   }
 }

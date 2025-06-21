@@ -1,10 +1,9 @@
-import PurchedProducts from "@/components/Farmer/extra/PurchedProducts";
-import React from "react";
+import PurchasedProducts from "@/components/Farmer/PurchedProducts";
 
 const page = () => {
   return (
     <div>
-      <PurchedProducts />
+      <PurchasedProducts />
     </div>
   );
 };

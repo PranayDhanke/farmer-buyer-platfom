@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Negotiate from "../Farmer/extra/Negotiate";
 import { FaSearch } from "react-icons/fa";
 import { IoIosFunnel } from "react-icons/io";
 import Image from "next/image";
@@ -10,6 +9,7 @@ import bgims from "@/../public/images/image.png";
 import { supabase } from "@/app/lib/superbase/supabaseClient";
 import { toast, ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
+import Negotiate from "../Farmer/Negotiate";
 
 const ProductDisplay = ({
   item,
@@ -70,7 +70,7 @@ const ProductDisplay = ({
   }, [item]);
 
   const addCartProd = (
-    id: string,
+    prodID: string,
     name: string,
     price: number,
     quantity: number,
@@ -86,13 +86,13 @@ const ProductDisplay = ({
       return;
     }
 
-    const product = products.find((p) => p.id === id);
+    const product = products.find((p) => p.id === prodID);
     if (!product) {
       toast.error("Product not found");
       return;
     }
 
-    const cartItem = cart.find((item) => item.id === id);
+    const cartItem = cart.find((item) => item.prodID === prodID);
     const alreadyInCart = cartItem ? cartItem.quantity : 0;
 
     if (alreadyInCart + quantity > product.quantity) {
@@ -100,8 +100,15 @@ const ProductDisplay = ({
       return;
     }
 
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let confirmId = "";
+    for (let i = 0; i < 10; i++) {
+      confirmId += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
     addToCart({
-      id,
+      prodID,
       name,
       price,
       quantity,
@@ -111,6 +118,11 @@ const ProductDisplay = ({
       prod_name,
       category,
       description,
+      confirmId,
+      isDelivered: false,
+      hasPayment: false,
+      hasConformed:false,
+      hasReject:false
     });
   };
 

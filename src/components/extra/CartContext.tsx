@@ -4,7 +4,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type CartItem = {
-  id: string;
+  prodID: string;
   name: string;
   prod_name:string;
   price: number;
@@ -14,6 +14,11 @@ type CartItem = {
   uid: string;
   category:string;
   description:string;
+  confirmId : string;
+  isDelivered:boolean;
+  hasPayment:boolean;
+  hasConformed:boolean;
+  hasReject:boolean;
 };
 
 type CartContextType = {
@@ -41,10 +46,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (item: CartItem) => {
     setCart((prevCart) => {
-      const existing = prevCart.find((i) => i.id === item.id);
+      const existing = prevCart.find((i) => i.prodID === item.prodID);
       if (existing) {
         return prevCart.map((i) =>
-          i.id === item.id
+          i.prodID === item.prodID
             ? { ...i, quantity: i.quantity + (item.quantity || 1) }
             : i
         );
@@ -55,13 +60,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const removeFromCart = (id: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    setCart((prevCart) => prevCart.filter((item) => item.prodID !== id));
   };
 
   const updateQuantity = (id: string, newQuantity: number) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.id === id
+        item.prodID === id
           ? {
               ...item,
               quantity: Math.max(newQuantity, 1), // Ensure minimum quantity is 1

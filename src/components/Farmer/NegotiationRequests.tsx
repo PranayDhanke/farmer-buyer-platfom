@@ -5,7 +5,7 @@ import imgs from "@/../public/images/image.png";
 import { VscLoading } from "react-icons/vsc";
 import { onAuthStateChanged } from "firebase/auth";
 import { fireAuth } from "@/app/lib/Firebase/Firebase";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const NegotiationRequests = () => {
   const [loading, setLoading] = useState(true);
@@ -167,6 +167,7 @@ const NegotiationRequests = () => {
           ))}
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 };

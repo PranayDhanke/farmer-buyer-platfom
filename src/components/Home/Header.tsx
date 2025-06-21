@@ -231,6 +231,12 @@ const Header = () => {
                         href="/Farmer-Panel"
                         className="block px-4 py-2 hover:bg-green-100"
                       >
+                        Dashboard
+                      </Link>
+                      <Link
+                        href="/Farmer-Panel"
+                        className="block px-4 py-2 hover:bg-green-100"
+                      >
                         My Products
                       </Link>
                       <hr />

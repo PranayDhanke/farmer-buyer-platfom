@@ -1,12 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { supabase } from "@/app/lib/superbase/supabaseClient";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { fireAuth } from "@/app/lib/Firebase/Firebase";
 import { VscLoading } from "react-icons/vsc";
-import { ToastContainer } from "react-toastify";
-import { filter } from "framer-motion/client";
-import DisplayOrdered from "./extra/DisplayOrdered";
+import DisplaySold from "./extra/DisplaySold";
 
-const OrderedProduct = () => {
+
+const PurchasedProducts = () => {
   interface Product {
     id: string;
     prodID: string;
@@ -30,26 +30,23 @@ const OrderedProduct = () => {
   const [prodData, setProdData] = useState<Product[]>([]);
 
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const getData = async () => {
-      const {
-        data: { user: supabaseUser },
-      } = await supabase.auth.getUser();
+      onAuthStateChanged(fireAuth, async (user) => {
+        if (user?.uid) {
+          const farmerId = user.uid;
+          const res = await fetch("/api/Product/getFarmer", {
+            method: "POST",
+            body: JSON.stringify({ farmerId }),
+          });
 
-      if (supabaseUser?.id) {
-        const buyerId = supabaseUser.id;
-        const res = await fetch("/api/Product/get", {
-          method: "POST",
-          body: JSON.stringify({ buyerId }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setProdData(data.products);
-          setLoading(false);
+          if (res.ok) {
+            const data = await res.json();
+            setProdData(data.products);
+            setLoading(false);
+          }
         }
-      }
+      });
     };
     getData();
   }, []);
@@ -70,7 +67,6 @@ const OrderedProduct = () => {
       product.TransMode === "buyerTrans" ||
       (product.TransMode !== "BuyerTrans" && product.hasConformed === true);
 
-
     const isSearchMatch =
       product.prod_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -78,11 +74,11 @@ const OrderedProduct = () => {
     return isCategoryMatch && isPriceMatch && isSearchMatch && setFilter;
   });
 
+
   return (
     <div className="p-4 md:p-8">
-      <ToastContainer />
       <h2 className="text-4xl font-bold text-gray-800 mb-10 text-center">
-        My Purchased Products
+        My Sold Products
       </h2>
 
       {/* Filters */}
@@ -121,18 +117,18 @@ const OrderedProduct = () => {
       {/* Product Cards */}
       {loading ? (
         <>
-          <VscLoading className="animate-spin text-2xl text-center w-full" />
+          <VscLoading className="text-center animate-spin text-2xl w-full" />
         </>
       ) : (
-        <div className="grid bg-gray-50 p-5 rounded-2xl grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {filter.length === 0 ? (
+        <div className="grid bg-gray-50 rounded-2xl p-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {filteredProducts.length === 0 ? (
             <p className="text-gray-500 col-span-full text-center text-lg">
               No products found.
             </p>
           ) : (
-            <>
+           <>
               {filteredProducts.map((product) => (
-                <DisplayOrdered
+                <DisplaySold
                   key={`${product.id}-${product.prodID}+${product.confirmId}`}
                   product={product}
                 />
@@ -145,4 +141,4 @@ const OrderedProduct = () => {
   );
 };
 
-export default OrderedProduct;
+export default PurchasedProducts;
